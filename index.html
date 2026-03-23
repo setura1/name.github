@@ -3,124 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<meta name="theme-color" content="#2563eb">
-<title>touch_vocab_rebuild.html</title>
+<title>simple_touch_vocab.html</title>
 <style>
-:root{
-  --bg:#eef4ff;
-  --panel:#ffffff;
-  --line:#d8e3f2;
-  --text:#17212f;
-  --muted:#667085;
-  --accent:#2563eb;
-  --accent-dark:#1d4ed8;
-  --ok:#ecfdf3;
-  --ng:#fff1f2;
-}
 *{
   box-sizing:border-box;
   -webkit-tap-highlight-color:transparent;
 }
 html,body{
   margin:0;
-  padding:0;
   width:100%;
   height:100%;
-  background:var(--bg);
-  color:var(--text);
+  background:#f5f7fb;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic UI",sans-serif;
 }
 body{
   overflow:hidden;
-  touch-action:manipulation;
 }
-body.flash-ok{ background:var(--ok); }
-body.flash-ng{ background:var(--ng); }
-
 #setup{
   position:fixed;
   inset:0;
-  z-index:20;
+  background:#f5f7fb;
+  padding:12px;
+  z-index:10;
   overflow:auto;
-  background:rgba(238,244,255,.98);
-  padding:
-    max(10px, env(safe-area-inset-top))
-    10px
-    max(12px, env(safe-area-inset-bottom))
-    10px;
 }
-.setup-panel{
+#setupInner{
   max-width:900px;
   margin:0 auto;
   background:#fff;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:14px;
+  border:1px solid #d7deea;
+  border-radius:16px;
+  padding:12px;
 }
-.setup-title{
-  font-size:20px;
-  font-weight:900;
-  margin-bottom:4px;
-}
-.small{
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.5;
-}
-.section{
-  margin-top:14px;
-}
-.section-title{
-  font-size:15px;
-  font-weight:900;
-  margin-bottom:8px;
-}
-textarea,input[type="number"],input[type="text"],select,input[type="file"]{
+textarea,input,select,button{
   width:100%;
-  border:1px solid var(--line);
-  border-radius:14px;
+  font-size:16px;
+  border-radius:12px;
+}
+textarea,input,select{
+  border:1px solid #d7deea;
   padding:12px;
   background:#fff;
-  color:var(--text);
-  font-size:16px;
 }
 textarea{
+  min-height:220px;
   resize:vertical;
-  min-height:180px;
   line-height:1.5;
-}
-.row{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
-  margin-top:8px;
-}
-.row3{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-top:8px;
 }
 button{
   min-height:54px;
-  border:1px solid var(--line);
-  border-radius:14px;
+  border:1px solid #d7deea;
   background:#fff;
-  color:var(--text);
-  font-size:16px;
   font-weight:900;
-  padding:10px 12px;
 }
-.btn-main{
-  background:linear-gradient(180deg,#2f76ff,#1d4ed8);
+#startBtn{
+  background:#2563eb;
   color:#fff;
-  border-color:#1d4ed8;
+  border-color:#2563eb;
 }
-#wrongArea,#resultArea{
-  min-height:120px;
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:8px;
 }
-
+.small{
+  font-size:12px;
+  color:#667085;
+  margin:6px 0 4px;
+}
 #app{
   width:100%;
   height:100%;
@@ -132,379 +83,131 @@ button{
     max(12px, env(safe-area-inset-bottom))
     10px;
 }
-.topbar{
-  flex:0 0 auto;
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:10px;
-}
-.progress-bg{
-  width:100%;
-  height:12px;
-  background:#e7eef9;
-  border-radius:999px;
-  overflow:hidden;
-}
-#progressBar{
-  height:100%;
-  width:0%;
-  background:var(--accent);
-  transition:width .18s ease;
-}
-.meta{
-  margin-top:8px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px 12px;
-  justify-content:space-between;
-  font-size:13px;
-}
-#status{
-  margin-top:8px;
-  font-size:16px;
-  font-weight:900;
-}
-#timer{
-  margin-top:4px;
-  font-size:15px;
-  color:#b42318;
-  font-weight:900;
-  min-height:20px;
-}
-
 #card{
   flex:1 1 auto;
-  margin-top:10px;
-  background:var(--panel);
-  border:2px solid var(--line);
+  background:#fff;
+  border:2px solid #d7deea;
   border-radius:24px;
-  position:relative;
-  overflow:hidden;
   display:flex;
   align-items:center;
   justify-content:center;
   text-align:center;
+  padding:20px;
 }
-.touch-zone{
-  position:absolute;
-  top:0;
-  bottom:0;
-  z-index:1;
-}
-#zoneLeft{ left:0; width:33.33%; }
-#zoneCenter{ left:33.33%; width:33.34%; }
-#zoneRight{ right:0; width:33.33%; }
-
-.word-wrap{
-  position:relative;
-  z-index:2;
-  width:100%;
-  padding:26px 14px;
-}
-.badge{
-  display:inline-block;
-  font-size:11px;
-  color:#475467;
-  background:#f8fbff;
-  border:1px solid #d7e1f1;
-  border-radius:999px;
-  padding:5px 10px;
-  margin-bottom:12px;
-  font-weight:800;
-}
-#englishWord{
+#word{
   font-size:34px;
-  line-height:1.3;
+  line-height:1.35;
   font-weight:900;
   word-break:break-word;
   overflow-wrap:anywhere;
 }
-#japaneseWord{
-  margin-top:16px;
-  font-size:22px;
-  line-height:1.45;
-  color:#475467;
-  min-height:1.5em;
-  word-break:break-word;
-  overflow-wrap:anywhere;
-}
-#hint{
-  margin-top:12px;
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.5;
-}
-.floating{
-  position:absolute;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:3;
-  font-size:11px;
-  color:#667085;
-  background:#f8fafc;
-  border:1px solid #e2e8f2;
-  border-radius:999px;
-  padding:4px 10px;
-  white-space:nowrap;
-  max-width:92%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.action-bar{
+#buttons{
   flex:0 0 auto;
   margin-top:10px;
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
   gap:8px;
 }
-.big-btn{
-  min-height:64px;
-  font-size:19px;
+#wrongBtn,#againBtn,#correctBtn{
+  min-height:78px;
+  font-size:22px;
   border-radius:18px;
 }
-.ng-btn{
-  background:#fff;
-}
-.center-btn{
-  background:#f8fbff;
-}
-.ok-btn{
-  background:linear-gradient(180deg,#2f76ff,#1d4ed8);
+#correctBtn{
+  background:#2563eb;
   color:#fff;
-  border-color:#1d4ed8;
+  border-color:#2563eb;
 }
-
-.bottom{
-  flex:0 0 auto;
+#result{
   margin-top:10px;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:8px;
+  width:100%;
+  min-height:120px;
 }
-.stat{
-  background:var(--panel);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:8px;
-  text-align:center;
-}
-.stat .label{
-  font-size:11px;
-  color:var(--muted);
-}
-.stat .value{
-  margin-top:4px;
-  font-size:20px;
-  font-weight:900;
-}
-
 @media (max-width:480px){
-  #englishWord{ font-size:28px; }
-  #japaneseWord{ font-size:20px; }
-  .row,.row3{ grid-template-columns:1fr; }
-  .bottom{ grid-template-columns:repeat(2,1fr); }
-  .action-bar{ grid-template-columns:1fr; }
+  #word{
+    font-size:28px;
+  }
+  #buttons{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
 <body>
 
 <div id="setup">
-  <div class="setup-panel">
-    <div class="setup-title">タッチ専用 英単語カード</div>
-    <div class="small">停止機能なし。左タップまたは左ボタンで ×、右タップまたは右ボタンで ○、中央タップまたは中央ボタンで再読・次へ。2本指タップで設定画面を開けます。</div>
+  <div id="setupInner">
+    <div style="font-size:20px;font-weight:900;">英単語カード</div>
 
-    <div class="section">
-      <div class="section-title">単語リスト</div>
-      <textarea id="importArea">apple,りんご
+    <div class="small">単語リスト</div>
+    <textarea id="importArea">apple,りんご
 engineer,技術者
 design,設計
 analysis,分析
 system,システム</textarea>
-      <input type="file" id="fileInput" accept=".csv,.txt,text/plain" style="margin-top:8px;">
+
+    <div class="small">回答制限(ms)</div>
+    <input type="number" id="answerLimit" value="1500" min="100" step="100">
+
+    <div class="small">英語速度</div>
+    <input type="number" id="rateEn" value="1.2" step="0.1">
+
+    <div class="small">日本語速度</div>
+    <input type="number" id="rateJa" value="1.1" step="0.1">
+
+    <div class="small">日本語も読む</div>
+    <select id="speakJapanese">
+      <option value="yes" selected>yes</option>
+      <option value="no">no</option>
+    </select>
+
+    <div class="row">
+      <button id="startBtn">開始</button>
+      <button id="closeSetupBtn">閉じる</button>
     </div>
 
-    <div class="section">
-      <div class="section-title">単語を追加</div>
-      <div class="row">
-        <input type="text" id="addEn" placeholder="English">
-        <input type="text" id="addJa" placeholder="日本語">
-      </div>
-      <div class="row">
-        <button id="addWordBtn" class="btn-main">単語を追加</button>
-        <button id="clearAddBtn">入力欄クリア</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">設定</div>
-      <div class="row">
-        <div>
-          <div class="small">回答制限(ms)</div>
-          <input type="number" id="answerLimit" value="1500" min="100" step="100">
-        </div>
-        <div>
-          <div class="small">英語速度</div>
-          <input type="number" id="rateEn" value="1.2" step="0.1">
-        </div>
-        <div>
-          <div class="small">日本語速度</div>
-          <input type="number" id="rateJa" value="1.1" step="0.1">
-        </div>
-        <div>
-          <div class="small">日本語も読み上げる</div>
-          <select id="speakJapanese">
-            <option value="yes" selected>yes</option>
-            <option value="no">no</option>
-          </select>
-        </div>
-        <div>
-          <div class="small">英語音声</div>
-          <select id="voiceEn"></select>
-        </div>
-        <div>
-          <div class="small">日本語音声</div>
-          <select id="voiceJa"></select>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="row">
-        <button id="startBtn" class="btn-main">開始</button>
-        <button id="closeSetupBtn">設定を閉じる</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">間違えた単語だけ</div>
-      <textarea id="wrongArea" readonly></textarea>
-      <div class="row3">
-        <button id="copyWrongBtn">間違いだけコピー</button>
-        <button id="replaceImportWithWrongBtn">間違いで置き換え</button>
-        <button id="appendWrongToImportBtn">間違いを追記</button>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">今回結果</div>
-      <textarea id="resultArea" readonly></textarea>
-      <div class="row">
-        <button id="copyResultBtn">結果コピー</button>
-        <button id="copyWrongHeaderBtn">見出し付きでコピー</button>
-      </div>
-    </div>
+    <div class="small">結果</div>
+    <textarea id="result" readonly></textarea>
   </div>
 </div>
 
 <div id="app">
-  <div class="topbar">
-    <div class="progress-bg"><div id="progressBar"></div></div>
-    <div class="meta">
-      <div># <span id="qNum">0</span> / <span id="qTotal">0</span></div>
-      <div>○ <span id="correctCount">0</span></div>
-      <div>× <span id="wrongCount">0</span></div>
-      <div>正答率 <span id="accuracy">0%</span></div>
-    </div>
-    <div id="status">待機中</div>
-    <div id="timer"></div>
-  </div>
-
   <div id="card">
-    <div class="floating">左 × / 中央 再読・次へ / 右 ○</div>
-    <div class="touch-zone" id="zoneLeft"></div>
-    <div class="touch-zone" id="zoneCenter"></div>
-    <div class="touch-zone" id="zoneRight"></div>
-
-    <div class="word-wrap">
-      <div class="badge">現在の単語</div>
-      <div id="englishWord">---</div>
-      <div id="japaneseWord">---</div>
-      <div id="hint">2本指タップで設定画面</div>
-    </div>
+    <div id="word">---</div>
   </div>
 
-  <div class="action-bar">
-    <button id="wrongBtn" class="big-btn ng-btn">× わからない</button>
-    <button id="centerBtn" class="big-btn center-btn">再読 / 次へ</button>
-    <button id="correctBtn" class="big-btn ok-btn">○ わかる</button>
-  </div>
-
-  <div class="bottom">
-    <div class="stat"><div class="label">開始</div><div class="value" id="startTimeText">--:--</div></div>
-    <div class="stat"><div class="label">終了</div><div class="value" id="endTimeText">--:--</div></div>
-    <div class="stat"><div class="label">経過</div><div class="value" id="elapsedText">0s</div></div>
-    <div class="stat"><div class="label">状態</div><div class="value" id="runState">RUN</div></div>
+  <div id="buttons">
+    <button id="wrongBtn">わからない</button>
+    <button id="againBtn">さいこう</button>
+    <button id="correctBtn">わかる</button>
   </div>
 </div>
 
 <script>
-const STORAGE_KEY = "touch_vocab_rebuild_v1";
-
-const setup = document.getElementById("setup");
 const importArea = document.getElementById("importArea");
-const fileInput = document.getElementById("fileInput");
 const answerLimitInput = document.getElementById("answerLimit");
 const rateEnInput = document.getElementById("rateEn");
 const rateJaInput = document.getElementById("rateJa");
 const speakJapaneseSelect = document.getElementById("speakJapanese");
-const voiceEnSelect = document.getElementById("voiceEn");
-const voiceJaSelect = document.getElementById("voiceJa");
 const startBtn = document.getElementById("startBtn");
 const closeSetupBtn = document.getElementById("closeSetupBtn");
+const setup = document.getElementById("setup");
 
-const addEn = document.getElementById("addEn");
-const addJa = document.getElementById("addJa");
-const addWordBtn = document.getElementById("addWordBtn");
-const clearAddBtn = document.getElementById("clearAddBtn");
-
-const wrongArea = document.getElementById("wrongArea");
-const resultArea = document.getElementById("resultArea");
-const copyWrongBtn = document.getElementById("copyWrongBtn");
-const copyResultBtn = document.getElementById("copyResultBtn");
-const copyWrongHeaderBtn = document.getElementById("copyWrongHeaderBtn");
-const replaceImportWithWrongBtn = document.getElementById("replaceImportWithWrongBtn");
-const appendWrongToImportBtn = document.getElementById("appendWrongToImportBtn");
-
-const progressBar = document.getElementById("progressBar");
-const qNumEl = document.getElementById("qNum");
-const qTotalEl = document.getElementById("qTotal");
-const correctCountEl = document.getElementById("correctCount");
-const wrongCountEl = document.getElementById("wrongCount");
-const accuracyEl = document.getElementById("accuracy");
-const statusEl = document.getElementById("status");
-const timerEl = document.getElementById("timer");
-const englishWord = document.getElementById("englishWord");
-const japaneseWord = document.getElementById("japaneseWord");
-const startTimeText = document.getElementById("startTimeText");
-const endTimeText = document.getElementById("endTimeText");
-const elapsedText = document.getElementById("elapsedText");
-const runState = document.getElementById("runState");
-
-const zoneLeft = document.getElementById("zoneLeft");
-const zoneCenter = document.getElementById("zoneCenter");
-const zoneRight = document.getElementById("zoneRight");
+const wordEl = document.getElementById("word");
 const wrongBtn = document.getElementById("wrongBtn");
-const centerBtn = document.getElementById("centerBtn");
+const againBtn = document.getElementById("againBtn");
 const correctBtn = document.getElementById("correctBtn");
+const resultEl = document.getElementById("result");
 
-let voices = [];
-let allWords = [];
+let words = [];
 let queue = [];
 let current = null;
 let results = [];
-let questionIndex = 0;
-let totalInSession = 0;
-
+let voices = [];
+let timer = null;
 let running = false;
-let acceptingAnswer = false;
-let answeredThisQuestion = false;
-let countdownTimer = null;
-let elapsedTimer = null;
-let remainingMs = 0;
+let accepting = false;
+let answered = false;
 let startTime = null;
 let endTime = null;
 
@@ -516,18 +219,11 @@ function parseWords(text){
     .map(line => {
       const parts = line.includes("\t") ? line.split("\t") : line.split(",");
       return {
-        en: (parts[0] || "").trim(),
-        ja: parts.slice(1).join(",").trim()
+        en:(parts[0] || "").trim(),
+        ja:parts.slice(1).join(",").trim()
       };
     })
     .filter(v => v.en && v.ja);
-}
-
-function normalizeWordLine(en, ja){
-  const enText = String(en || "").trim();
-  const jaText = String(ja || "").trim();
-  if(!enText || !jaText) return "";
-  return `${enText},${jaText}`;
 }
 
 function shuffle(arr){
@@ -539,235 +235,52 @@ function shuffle(arr){
   return a;
 }
 
-function formatClock(d){
-  if(!d) return "--:--";
-  return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-}
-
-function formatDateTime(d){
-  if(!d) return "未終了";
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
-}
-
-function elapsedSeconds(){
-  if(!startTime) return 0;
-  const last = endTime || new Date();
-  return Math.max(0, Math.floor((last - startTime) / 1000));
-}
-
-function flashScreen(type){
-  const cls = type === "ok" ? "flash-ok" : "flash-ng";
-  document.body.classList.add(cls);
-  setTimeout(() => document.body.classList.remove(cls), 180);
-}
-
-function setStatus(text){ statusEl.textContent = text; }
-function setTimer(text){ timerEl.textContent = text; }
-
-function updateWord(en, ja){
-  englishWord.textContent = en || "---";
-  japaneseWord.textContent = ja || "---";
-}
-
-function updateTime(){
-  startTimeText.textContent = formatClock(startTime);
-  endTimeText.textContent = formatClock(endTime);
-  elapsedText.textContent = `${elapsedSeconds()}s`;
-  runState.textContent = running ? "RUN" : "END";
-}
-
-function updateProgress(){
-  const ratio = totalInSession ? (questionIndex / totalInSession) * 100 : 0;
-  progressBar.style.width = `${ratio}%`;
-  qNumEl.textContent = questionIndex;
-  qTotalEl.textContent = totalInSession;
-}
-
-function updateStats(){
-  const c = results.filter(r => r.result === "○").length;
-  const w = results.filter(r => r.result === "×").length;
-  const acc = results.length ? Math.round(c / results.length * 100) : 0;
-  correctCountEl.textContent = c;
-  wrongCountEl.textContent = w;
-  accuracyEl.textContent = `${acc}%`;
-  wrongArea.value = buildWrongText(false);
-  resultArea.value = buildResultText();
-}
-
-function buildWrongText(withHeader=false){
-  const wrongSet = new Set(results.filter(r => r.result === "×").map(r => `${r.en}\t${r.ja}`));
-  const lines = allWords
-    .filter(w => wrongSet.has(`${w.en}\t${w.ja}`))
-    .map(w => `${w.en},${w.ja}`);
-
-  if(withHeader){
-    return [
-      `作成日時,${formatDateTime(new Date())}`,
-      "これはまちがえた単語です",
-      ...lines
-    ].join("\n");
-  }
-  return lines.join("\n");
-}
-
-function buildResultText(){
-  const c = results.filter(r => r.result === "○").length;
-  const w = results.filter(r => r.result === "×").length;
-  const acc = results.length ? Math.round(c / results.length * 100) : 0;
-  return [
-    "英単語トレーナー 今回結果",
-    `開始: ${startTime ? formatDateTime(startTime) : "-"}`,
-    `終了: ${endTime ? formatDateTime(endTime) : "未終了"}`,
-    `問題数: ${totalInSession}`,
-    `回答数: ${results.length}`,
-    `正解: ${c}`,
-    `不正解: ${w}`,
-    `正答率: ${acc}%`,
-    `経過秒: ${elapsedSeconds()}s`,
-    "",
-    "ミス単語",
-    buildWrongText(false) || "(なし)"
-  ].join("\n");
-}
-
-async function copyText(text){
-  let ok = false;
-  try{
-    await navigator.clipboard.writeText(text);
-    ok = true;
-  }catch{
-    const temp = document.createElement("textarea");
-    temp.value = text;
-    temp.style.position = "fixed";
-    temp.style.left = "-9999px";
-    document.body.appendChild(temp);
-    temp.focus();
-    temp.select();
-    try{
-      ok = document.execCommand("copy");
-    }catch{
-      ok = false;
-    }
-    document.body.removeChild(temp);
-  }
-  setStatus(ok ? "コピーしました" : "コピー失敗");
-}
-
-function saveState(){
-  const data = {
-    importArea: importArea.value,
-    answerLimit: answerLimitInput.value,
-    rateEn: rateEnInput.value,
-    rateJa: rateJaInput.value,
-    speakJapanese: speakJapaneseSelect.value,
-    voiceEn: voiceEnSelect.value,
-    voiceJa: voiceJaSelect.value
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-function restoreState(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return;
-    const d = JSON.parse(raw);
-    if(typeof d.importArea === "string") importArea.value = d.importArea;
-    if(d.answerLimit != null) answerLimitInput.value = d.answerLimit;
-    if(d.rateEn != null) rateEnInput.value = d.rateEn;
-    if(d.rateJa != null) rateJaInput.value = d.rateJa;
-    if(d.speakJapanese != null) speakJapaneseSelect.value = d.speakJapanese;
-  }catch{}
-}
-
-function populateVoices(){
-  voices = speechSynthesis.getVoices();
-  voiceEnSelect.innerHTML = "";
-  voiceJaSelect.innerHTML = "";
-
-  const enVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
-  const jaVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("ja"));
-
-  enVoices.forEach(v => {
-    const i = voices.indexOf(v);
-    voiceEnSelect.add(new Option(`${v.name} (${v.lang})`, i));
-  });
-  jaVoices.forEach(v => {
-    const i = voices.indexOf(v);
-    voiceJaSelect.add(new Option(`${v.name} (${v.lang})`, i));
-  });
-
-  if(enVoices.length === 0) voiceEnSelect.add(new Option("default", ""));
-  if(jaVoices.length === 0) voiceJaSelect.add(new Option("default", ""));
-}
-
-function speak(text, lang, rate, voiceIdx, onend){
+function speak(text, lang, rate){
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang;
   u.rate = Number(rate) || 1.0;
-  if(voiceIdx !== "" && voices[voiceIdx]) u.voice = voices[voiceIdx];
-  u.onend = () => { if(typeof onend === "function") onend(); };
   speechSynthesis.speak(u);
 }
 
-function unlockIOSAudio(){
-  const u = new SpeechSynthesisUtterance(" ");
-  u.volume = 0;
+function unlockAudio(){
   try{
+    const u = new SpeechSynthesisUtterance(" ");
+    u.volume = 0;
     speechSynthesis.speak(u);
     speechSynthesis.cancel();
-  }catch{}
+  }catch(e){}
 }
 
-function clearSpeechAndTimers(){
-  speechSynthesis.cancel();
-  clearInterval(countdownTimer);
+function showWord(){
+  if(!current){
+    wordEl.textContent = "---";
+    return;
+  }
+  wordEl.textContent = current.en;
 }
 
-function revealCurrentWord(){
+function readWord(){
   if(!current) return;
-  updateWord(current.en, current.ja);
-}
-
-function startAnswerTimer(){
-  remainingMs = Number(answerLimitInput.value) || 1500;
-  setTimer(`Time: ${(remainingMs / 1000).toFixed(1)}s`);
-  clearInterval(countdownTimer);
-  countdownTimer = setInterval(() => {
-    remainingMs -= 100;
-    setTimer(`Time: ${(Math.max(0, remainingMs) / 1000).toFixed(1)}s`);
-    if(remainingMs <= 0){
-      clearInterval(countdownTimer);
-      submitAnswer("×", true);
-    }
-  }, 100);
-}
-
-function readCurrentWordAgain(){
-  if(!current || !running) return;
-  clearSpeechAndTimers();
-  acceptingAnswer = false;
-  answeredThisQuestion = false;
-  revealCurrentWord();
-  setStatus("再読中");
-  setTimer("");
-
   speechSynthesis.cancel();
-  speak(current.en, "en-US", rateEnInput.value, voiceEnSelect.value, () => {
-    if(!running) return;
-    acceptingAnswer = true;
-    setStatus("回答受付中");
-    startAnswerTimer();
-    if(speakJapaneseSelect.value === "yes"){
-      speak(current.ja, "ja-JP", rateJaInput.value, voiceJaSelect.value);
-    }
-  });
+  speak(current.en, "en-US", rateEnInput.value);
+  if(speakJapaneseSelect.value === "yes"){
+    setTimeout(() => {
+      if(current) speak(current.ja, "ja-JP", rateJaInput.value);
+    }, 450);
+  }
+}
+
+function startTimer(){
+  clearTimeout(timer);
+  const ms = Number(answerLimitInput.value) || 1500;
+  timer = setTimeout(() => {
+    submit("×");
+  }, ms);
 }
 
 function nextWord(){
-  if(!running) return;
-  clearSpeechAndTimers();
-  acceptingAnswer = false;
-  answeredThisQuestion = false;
+  clearTimeout(timer);
+  speechSynthesis.cancel();
 
   if(queue.length === 0){
     finishSession();
@@ -775,193 +288,110 @@ function nextWord(){
   }
 
   current = queue.pop();
-  questionIndex++;
-  updateProgress();
-  revealCurrentWord();
-  setStatus("英語読上げ中");
-  setTimer("");
-
-  speechSynthesis.cancel();
-  speak(current.en, "en-US", rateEnInput.value, voiceEnSelect.value, () => {
-    if(!running) return;
-    acceptingAnswer = true;
-    setStatus("回答受付中");
-    startAnswerTimer();
-    if(speakJapaneseSelect.value === "yes"){
-      speak(current.ja, "ja-JP", rateJaInput.value, voiceJaSelect.value);
-    }
-  });
+  accepting = true;
+  answered = false;
+  showWord();
+  readWord();
+  startTimer();
 }
 
-function submitAnswer(mark, isTimeout=false){
-  if(!current || !running || !acceptingAnswer || answeredThisQuestion) return;
+function submit(mark){
+  if(!running || !accepting || answered || !current) return;
 
-  answeredThisQuestion = true;
-  acceptingAnswer = false;
-  clearInterval(countdownTimer);
+  answered = true;
+  accepting = false;
+  clearTimeout(timer);
 
-  results.push({ en: current.en, ja: current.ja, result: mark });
-
-  if(isTimeout){
-    flashScreen("ng");
-    setStatus("時間切れ");
-  }else if(mark === "○"){
-    flashScreen("ok");
-    setStatus("正解");
-  }else{
-    flashScreen("ng");
-    setStatus("不正解");
-  }
-
-  updateStats();
+  results.push({
+    en: current.en,
+    ja: current.ja,
+    result: mark
+  });
 
   setTimeout(() => {
     nextWord();
-  }, 220);
+  }, 180);
 }
 
-function handleCenterAction(){
-  if(!running) return;
-  if(!current) return;
-  if(answeredThisQuestion){
+function handleAgain(){
+  if(!running || !current) return;
+
+  if(answered){
     nextWord();
     return;
   }
-  readCurrentWordAgain();
-}
 
-async function startSession(){
-  unlockIOSAudio();
-
-  allWords = parseWords(importArea.value);
-  if(!allWords.length){
-    setStatus("単語がありません");
-    return;
-  }
-
-  results = [];
-  queue = shuffle(allWords);
-  current = null;
-  questionIndex = 0;
-  totalInSession = queue.length;
-  running = true;
-  acceptingAnswer = false;
-  answeredThisQuestion = false;
-  startTime = new Date();
-  endTime = null;
-
-  clearInterval(elapsedTimer);
-  elapsedTimer = setInterval(updateTime, 500);
-
-  updateStats();
-  updateProgress();
-  updateTime();
-  setup.style.display = "none";
-  nextWord();
+  clearTimeout(timer);
+  readWord();
+  startTimer();
 }
 
 function finishSession(){
   running = false;
-  acceptingAnswer = false;
-  answeredThisQuestion = true;
-  clearSpeechAndTimers();
+  accepting = false;
+  answered = true;
+  clearTimeout(timer);
+  speechSynthesis.cancel();
   endTime = new Date();
-  updateTime();
-  updateStats();
-  setStatus("終了");
-  setTimer("");
+
+  const correct = results.filter(v => v.result === "○").length;
+  const wrong = results.filter(v => v.result === "×").length;
+  const acc = results.length ? Math.round(correct / results.length * 100) : 0;
+  const wrongWords = results.filter(v => v.result === "×").map(v => `${v.en},${v.ja}`).join("\n");
+
+  resultEl.value = [
+    "英単語トレーナー 今回結果",
+    `開始: ${formatDateTime(startTime)}`,
+    `終了: ${formatDateTime(endTime)}`,
+    `問題数: ${words.length}`,
+    `回答数: ${results.length}`,
+    `正解: ${correct}`,
+    `不正解: ${wrong}`,
+    `正答率: ${acc}%`,
+    "",
+    "ミス単語",
+    wrongWords || "(なし)"
+  ].join("\n");
+
   setup.style.display = "block";
 }
 
-function addSingleWord(){
-  const line = normalizeWordLine(addEn.value, addJa.value);
-  if(!line){
-    setStatus("英語と日本語を入れてください");
-    return;
-  }
-  const base = importArea.value.trim();
-  importArea.value = base ? `${base}\n${line}` : line;
-  addEn.value = "";
-  addJa.value = "";
-  saveState();
-  setStatus("単語を追加しました");
+function formatDateTime(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const h = String(d.getHours()).padStart(2, "0");
+  const mi = String(d.getMinutes()).padStart(2, "0");
+  const s = String(d.getSeconds()).padStart(2, "0");
+  return `${y}-${m}-${day} ${h}:${mi}:${s}`;
 }
 
-function replaceImportWithWrongWords(){
-  const text = buildWrongText(false).trim();
-  if(!text){
-    setStatus("間違えた単語がありません");
+startBtn.addEventListener("click", () => {
+  unlockAudio();
+  words = parseWords(importArea.value);
+  if(!words.length){
+    alert("単語がありません");
     return;
   }
-  importArea.value = text;
-  saveState();
-  setStatus("間違えた単語で置き換えました");
-}
-
-function appendWrongWordsToImport(){
-  const text = buildWrongText(false).trim();
-  if(!text){
-    setStatus("間違えた単語がありません");
-    return;
-  }
-  const base = importArea.value.trim();
-  importArea.value = base ? `${base}\n${text}` : text;
-  saveState();
-  setStatus("間違えた単語を追記しました");
-}
-
-startBtn.addEventListener("click", async () => {
-  saveState();
-  await startSession();
+  queue = shuffle(words);
+  results = [];
+  current = null;
+  running = true;
+  accepting = false;
+  answered = false;
+  startTime = new Date();
+  endTime = null;
+  setup.style.display = "none";
+  nextWord();
 });
 
 closeSetupBtn.addEventListener("click", () => {
   setup.style.display = "none";
 });
 
-addWordBtn.addEventListener("click", addSingleWord);
-clearAddBtn.addEventListener("click", () => {
-  addEn.value = "";
-  addJa.value = "";
-  setStatus("入力欄をクリアしました");
-});
-addJa.addEventListener("keydown", (e) => {
-  if(e.key === "Enter"){
-    e.preventDefault();
-    addSingleWord();
-  }
-});
-
-copyWrongBtn.addEventListener("click", () => copyText(buildWrongText(false)));
-copyResultBtn.addEventListener("click", () => copyText(buildResultText()));
-copyWrongHeaderBtn.addEventListener("click", () => copyText(buildWrongText(true)));
-replaceImportWithWrongBtn.addEventListener("click", replaceImportWithWrongWords);
-appendWrongToImportBtn.addEventListener("click", appendWrongWordsToImport);
-
-fileInput.addEventListener("change", (e) => {
-  const file = e.target.files?.[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    importArea.value = String(reader.result || "");
-    saveState();
-    setStatus("ファイルを読み込みました");
-  };
-  reader.readAsText(file, "UTF-8");
-});
-
-[importArea, answerLimitInput, rateEnInput, rateJaInput, speakJapaneseSelect].forEach(el => {
-  el.addEventListener("input", saveState);
-  el.addEventListener("change", saveState);
-});
-
-zoneLeft.addEventListener("click", () => submitAnswer("×"));
-zoneCenter.addEventListener("click", handleCenterAction);
-zoneRight.addEventListener("click", () => submitAnswer("○"));
-
-wrongBtn.addEventListener("click", () => submitAnswer("×"));
-centerBtn.addEventListener("click", handleCenterAction);
-correctBtn.addEventListener("click", () => submitAnswer("○"));
+wrongBtn.addEventListener("click", () => submit("×"));
+correctBtn.addEventListener("click", () => submit("○"));
+againBtn.addEventListener("click", handleAgain);
 
 document.addEventListener("touchstart", (e) => {
   if(e.touches.length === 2){
@@ -969,32 +399,7 @@ document.addEventListener("touchstart", (e) => {
   }
 }, { passive:true });
 
-document.addEventListener("keydown", (e) => {
-  if(e.key === "Escape"){
-    setup.style.display = "block";
-  }
-});
-
-speechSynthesis.onvoiceschanged = () => {
-  populateVoices();
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      const d = JSON.parse(raw);
-      if(d.voiceEn != null) voiceEnSelect.value = d.voiceEn;
-      if(d.voiceJa != null) voiceJaSelect.value = d.voiceJa;
-    }
-  }catch{}
-};
-
-restoreState();
-populateVoices();
-updateWord("---","---");
-updateStats();
-updateProgress();
-updateTime();
-wrongArea.value = "";
-resultArea.value = "";
+wordEl.textContent = "---";
 </script>
 </body>
 </html>
