@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>simple_touch_vocab_1sec.html</title>
+<title>simple_touch_vocab_auto_japanese.html</title>
 <style>
 *{
   box-sizing:border-box;
@@ -207,8 +207,8 @@ system,システム</textarea>
     <div class="small">日本語速度</div>
     <input type="number" id="rateJa" value="1.1" step="0.1">
 
-    <div class="small">開始後は 1 秒で自動的に不正解</div>
-    <input type="number" id="answerLimit" value="1000" min="1000" max="1000" step="1000" readonly>
+    <div class="small">回答制限(ms)</div>
+    <input type="number" id="answerLimit" value="1000" min="100" step="100">
 
     <div class="row">
       <button id="startBtn">開始</button>
@@ -277,6 +277,7 @@ let startTime = null;
 let endTime = null;
 let totalCount = 0;
 let currentIndex = 0;
+let revealTimeout = null;
 
 function parseWords(text){
   return text
@@ -342,6 +343,11 @@ function updateProgress(){
   progressBarEl.style.width = `${percent}%`;
 }
 
+function clearAllTimers(){
+  clearTimeout(timer);
+  clearTimeout(revealTimeout);
+}
+
 function startAnswerTimer(){
   clearTimeout(timer);
   const ms = Number(answerLimitInput.value) || 1000;
@@ -356,6 +362,8 @@ function readWordSequence(){
   speechSynthesis.cancel();
   showFrontOnly();
 
+  // 最初は日本語を見せない
+  // 英語を読み終わったあとで日本語を表示
   speak(current.en, "en-US", rateEnInput.value, () => {
     showJapanese();
     speak(current.ja, "ja-JP", rateJaInput.value);
@@ -365,7 +373,7 @@ function readWordSequence(){
 }
 
 function nextWord(){
-  clearTimeout(timer);
+  clearAllTimers();
   speechSynthesis.cancel();
 
   if(queue.length === 0){
@@ -387,7 +395,7 @@ function submit(mark){
 
   answered = true;
   accepting = false;
-  clearTimeout(timer);
+  clearAllTimers();
 
   results.push({
     en: current.en,
@@ -409,7 +417,7 @@ function handleAgain(){
   }
 
   accepting = false;
-  clearTimeout(timer);
+  clearAllTimers();
   readWordSequence();
 }
 
@@ -417,7 +425,7 @@ function finishSession(){
   running = false;
   accepting = false;
   answered = true;
-  clearTimeout(timer);
+  clearAllTimers();
   speechSynthesis.cancel();
   endTime = new Date();
 
