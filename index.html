@@ -4,24 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#2563eb">
-<title>vocab_audio_trainer_mobile_opt.html</title>
+<title>vocab_audio_trainer_mobile_plus.html</title>
 <style>
 :root{
-  --bg:#f4f6fb;
+  --bg:#eef3fb;
   --panel:#ffffff;
-  --line:#d8deea;
-  --text:#17202f;
+  --line:#d7e0ef;
+  --text:#17212f;
   --muted:#667085;
   --accent:#2563eb;
-  --ok:#dff6e4;
-  --ng:#fde4e4;
-  --tm:#fff4d6;
-  --btn:#ffffff;
-  --shadow:0 6px 20px rgba(23,32,47,.08);
-  --radius:18px;
-  --tap-size:78px;
+  --accent-2:#1d4ed8;
+  --ok:#e9f9ee;
+  --ng:#fff0f0;
+  --tm:#fff7df;
+  --shadow:0 10px 28px rgba(23,33,47,.08);
+  --radius:20px;
 }
-*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{
   margin:0;
   padding:0;
@@ -34,7 +33,7 @@ body{
   padding:
     max(10px, env(safe-area-inset-top))
     10px
-    max(10px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-bottom))
     10px;
   overscroll-behavior-y:contain;
   touch-action:manipulation;
@@ -52,9 +51,9 @@ body.flash-timeout{ background:var(--tm) !important; }
   background:var(--panel);
   border:1px solid var(--line);
   border-radius:var(--radius);
+  box-shadow:var(--shadow);
   padding:12px;
   margin-bottom:10px;
-  box-shadow:var(--shadow);
 }
 .title{
   font-size:24px;
@@ -64,7 +63,12 @@ body.flash-timeout{ background:var(--tm) !important; }
 .small{
   font-size:12px;
   color:var(--muted);
-  line-height:1.45;
+  line-height:1.5;
+}
+.section-title{
+  font-size:16px;
+  font-weight:900;
+  margin-bottom:8px;
 }
 .row{
   display:flex;
@@ -72,55 +76,59 @@ body.flash-timeout{ background:var(--tm) !important; }
   flex-wrap:wrap;
   align-items:center;
 }
-textarea,input[type="number"],select,input[type="text"]{
-  width:100%;
-  font-size:16px;
-  padding:12px 12px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:#fff;
-  color:var(--text);
-}
-textarea{ resize:vertical; }
-#importArea{
-  min-height:120px;
-  font-size:14px;
-  line-height:1.35;
-}
-input[type="file"]{
-  width:100%;
-  font-size:15px;
-}
-button{
-  font-size:17px;
-  min-height:56px;
-  padding:12px 14px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:var(--btn);
-  color:var(--text);
-  cursor:pointer;
-  touch-action:manipulation;
-  font-weight:800;
-}
-button:disabled{
-  opacity:.45;
-  cursor:not-allowed;
+.grid-2{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:10px;
 }
 .button-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
   gap:8px;
 }
-.grid-2{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:10px;
+textarea,input[type="number"],select,input[type="text"]{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px 12px;
+  background:#fff;
+  color:var(--text);
+  font-size:16px;
 }
+textarea{ resize:vertical; }
+input[type="file"]{
+  width:100%;
+  font-size:15px;
+}
+button{
+  min-height:58px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#fff;
+  color:var(--text);
+  font-size:17px;
+  font-weight:900;
+  padding:12px 14px;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.btn-main{
+  background:linear-gradient(180deg,#2f76ff,#1d4ed8);
+  color:#fff;
+  border-color:#1d4ed8;
+}
+.btn-ok{ background:#edf9f0; }
+.btn-ng{ background:#fff1f1; }
+.btn-sub{ background:#f8fafc; }
+
 .progress-wrap{
   width:100%;
-  height:12px;
-  background:#e8edf5;
+  height:13px;
+  background:#e8edf6;
   border-radius:999px;
   overflow:hidden;
 }
@@ -131,34 +139,64 @@ button:disabled{
   transition:width .18s ease;
 }
 .status{
+  font-size:18px;
   font-weight:900;
   margin-top:8px;
-  font-size:18px;
 }
 .timer{
+  font-size:18px;
+  min-height:24px;
   color:#b42318;
   font-weight:900;
-  min-height:24px;
   margin-top:4px;
-  font-size:18px;
 }
-.word-box{
-  margin-top:16px;
+.meta-line{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+  font-size:14px;
+  margin-top:8px;
+}
+.word-card{
+  margin-top:14px;
+  border:2px solid #dce5f3;
+  border-radius:22px;
+  background:
+    radial-gradient(circle at top right, rgba(37,99,235,.07), transparent 32%),
+    #fff;
+  padding:18px 14px;
   text-align:center;
 }
+.word-badge{
+  display:inline-flex;
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid #d7e1f1;
+  background:#f8fbff;
+  color:#475467;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:12px;
+}
 #englishWord{
-  font-size:clamp(34px,6vw,48px);
+  font-size:clamp(34px,7vw,54px);
+  line-height:1.18;
   font-weight:900;
-  line-height:1.2;
   word-break:break-word;
 }
 #japaneseWord{
-  font-size:clamp(24px,4.2vw,32px);
-  color:#475467;
-  margin-top:10px;
-  min-height:40px;
+  font-size:clamp(24px,4.8vw,34px);
   line-height:1.35;
+  color:#475467;
+  margin-top:14px;
+  min-height:1.5em;
   word-break:break-word;
+}
+.sub-meaning{
+  margin-top:10px;
+  font-size:13px;
+  color:#667085;
 }
 .stat-grid{
   display:grid;
@@ -167,9 +205,9 @@ button:disabled{
   margin-top:14px;
 }
 .stat-box{
-  background:#f7f9fc;
+  background:#f8fafc;
   border:1px solid var(--line);
-  border-radius:14px;
+  border-radius:16px;
   padding:10px;
 }
 .label{
@@ -192,31 +230,52 @@ input[type="checkbox"]{
   height:20px;
   flex:0 0 auto;
 }
-body.focus-running .hide-in-focus{
-  display:none !important;
-}
 
-/* mobile sticky bottom controls */
 .mobile-sticky{
   position:sticky;
   bottom:0;
-  z-index:20;
-  background:linear-gradient(to top, rgba(244,246,251,1), rgba(244,246,251,.92), rgba(244,246,251,0));
+  z-index:30;
+  background:linear-gradient(to top, rgba(238,243,251,1), rgba(238,243,251,.95), rgba(238,243,251,0));
   padding-top:8px;
 }
+.hide-in-focus{ display:block; }
+body.focus-running .hide-in-focus{ display:none !important; }
 
-/* focus mode */
+.help-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#f8fafc;
+  font-size:12px;
+  color:#475467;
+}
+
+.copy-area{
+  min-height:180px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  line-height:1.45;
+}
+.copy-actions{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:8px;
+  margin-top:8px;
+}
+
 #focusMode{
   position:fixed;
   inset:0;
   z-index:9999;
-  background:#f8fafc;
+  background:#f8fbff;
   display:none;
   flex-direction:column;
   padding:
     max(10px, env(safe-area-inset-top))
     10px
-    max(10px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-bottom))
     10px;
 }
 #focusMode.active{ display:flex; }
@@ -232,20 +291,19 @@ body.focus-running .hide-in-focus{
   margin:10px 0;
 }
 #focusStatus{
+  font-size:18px;
   font-weight:900;
   text-align:center;
   margin-top:8px;
-  font-size:18px;
 }
 #focusTimer{
+  font-size:18px;
   color:#b42318;
   font-weight:900;
-  min-height:24px;
   text-align:center;
+  min-height:24px;
   margin-top:4px;
-  font-size:18px;
 }
-
 .focus-card{
   flex:1 1 auto;
   min-height:0;
@@ -253,10 +311,10 @@ body.focus-running .hide-in-focus{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  border:2px solid #dbe3f1;
-  border-radius:22px;
+  border:2px solid #dce5f3;
+  border-radius:24px;
   background:#fff;
-  padding:18px 14px;
+  padding:20px 14px;
   position:relative;
   overflow:hidden;
   user-select:none;
@@ -268,8 +326,8 @@ body.focus-running .hide-in-focus{
   transform:translateX(-50%);
   font-size:12px;
   color:#667085;
-  background:#f7f8fb;
-  border:1px solid #e4e8f0;
+  background:#f8fafc;
+  border:1px solid #e2e8f2;
   border-radius:999px;
   padding:5px 10px;
   white-space:nowrap;
@@ -278,20 +336,20 @@ body.focus-running .hide-in-focus{
   text-overflow:ellipsis;
 }
 .focus-word-en{
-  font-size:clamp(34px,8vw,78px);
+  font-size:clamp(36px,8vw,80px);
+  line-height:1.14;
   font-weight:900;
-  line-height:1.15;
   text-align:center;
   word-break:break-word;
 }
 .focus-word-ja{
-  margin-top:16px;
   font-size:clamp(24px,5vw,46px);
   line-height:1.3;
   color:#475467;
   text-align:center;
-  word-break:break-word;
+  margin-top:18px;
   min-height:1.4em;
+  word-break:break-word;
 }
 .tap-zone-left,.tap-zone-right{
   position:absolute;
@@ -336,17 +394,11 @@ body.focus-running .hide-in-focus{
 .focus-buttons button{
   min-height:82px;
   font-size:24px;
-  font-weight:900;
   border-radius:18px;
 }
 .focus-buttons .wide{
   grid-column:1 / -1;
 }
-.btn-ok{ background:#eefbf0; }
-.btn-ng{ background:#fff1f1; }
-.btn-rep{ background:#eef4ff; }
-.btn-sub{ background:#f8fafc; }
-
 .focus-side-hint{
   display:flex;
   justify-content:space-between;
@@ -356,57 +408,26 @@ body.focus-running .hide-in-focus{
   padding:0 4px;
 }
 
-.help-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:8px 10px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#f8fafc;
-  font-size:12px;
-  color:#475467;
-}
-
 @media (max-width:760px){
-  .container{ max-width:none; }
   .panel{ padding:10px; }
   .title{ font-size:22px; }
   .stat-grid{ grid-template-columns:repeat(2,1fr); }
   .focus-stats{ grid-template-columns:repeat(2,1fr); }
-  .focus-buttons{
-    grid-template-columns:1fr;
-  }
-  .focus-buttons button,
-  .focus-buttons .wide{
-    grid-column:auto;
-  }
-  .button-grid{
-    grid-template-columns:1fr 1fr;
-  }
-  button{
-    min-height:60px;
-    font-size:18px;
-  }
-  #englishWord{ font-size:clamp(30px,8vw,42px); }
-  #japaneseWord{ font-size:clamp(22px,5vw,28px); }
+  .focus-buttons{ grid-template-columns:1fr; }
+  .focus-buttons .wide{ grid-column:auto; }
+  .button-grid{ grid-template-columns:1fr 1fr; }
 }
-
 @media (max-width:420px){
   body{
     padding:
       max(8px, env(safe-area-inset-top))
       8px
-      max(8px, env(safe-area-inset-bottom))
+      max(10px, env(safe-area-inset-bottom))
       8px;
   }
-  .button-grid{
-    grid-template-columns:1fr;
-  }
-  .grid-2{
-    grid-template-columns:1fr;
-  }
-  .focus-word-en{ font-size:clamp(30px,9vw,52px); }
+  .button-grid{ grid-template-columns:1fr; }
+  .grid-2{ grid-template-columns:1fr; }
+  .focus-word-en{ font-size:clamp(32px,9vw,56px); }
   .focus-word-ja{ font-size:clamp(22px,6vw,34px); }
 }
 </style>
@@ -415,12 +436,14 @@ body.focus-running .hide-in-focus{
 <div class="container">
 
   <div class="panel hide-in-focus">
-    <div class="title">英単語トレーナー mobile</div>
-    <div class="small">iPhone / Android 最適化版。開始後は疑似全画面、左右タップ・スワイプ対応。iPhoneでは最初の開始ボタンが音声許可の起点になります。</div>
+    <div class="title">英単語トレーナー mobile+</div>
+    <div class="small">
+      iPhone / Android 向け。単語を大きく表示、左右タップ・スワイプ対応、×だけ再テスト、間違えた単語だけコピペ対応。
+    </div>
   </div>
 
   <div class="panel hide-in-focus">
-    <div style="font-weight:900; margin-bottom:8px;">単語リスト</div>
+    <div class="section-title">単語リスト</div>
     <textarea id="importArea">apple,りんご
 engineer,技術者
 design,設計
@@ -429,14 +452,14 @@ system,システム</textarea>
     <div class="row" style="margin-top:8px;">
       <input type="file" id="fileInput" accept=".csv,.txt,text/plain">
       <button id="loadBtn">更新</button>
-      <button id="copySessionBtn" disabled>結果コピー</button>
+      <button id="copyAllWordsBtn">単語リストコピー</button>
     </div>
     <div class="small" style="margin-top:6px;">1行に1語。english,japanese または english[TAB]japanese</div>
   </div>
 
   <div class="panel hide-in-focus">
     <div class="progress-wrap"><div id="progressBar"></div></div>
-    <div class="row" style="justify-content:space-between; margin-top:8px;">
+    <div class="meta-line">
       <div># <span id="qNum">0</span> / <span id="qTotal">0</span></div>
       <div>開始 <span id="startTimeText">--:--:--</span></div>
       <div>終了 <span id="endTimeText">--:--:--</span></div>
@@ -444,9 +467,11 @@ system,システム</textarea>
     <div id="status" class="status">待機中</div>
     <div id="timer" class="timer"></div>
 
-    <div class="word-box">
+    <div class="word-card">
+      <div class="word-badge">現在の単語</div>
       <div id="englishWord">---</div>
       <div id="japaneseWord"></div>
+      <div class="sub-meaning" id="subMeaning">開始するとここに意味が出ます</div>
     </div>
 
     <div class="stat-grid">
@@ -460,18 +485,20 @@ system,システム</textarea>
   <div class="mobile-sticky hide-in-focus">
     <div class="panel">
       <div class="button-grid">
-        <button id="startBtn">開始</button>
-        <button id="correctBtn">○ わかる</button>
-        <button id="wrongBtn">× わからない</button>
+        <button id="startBtn" class="btn-main">開始</button>
+        <button id="correctBtn" class="btn-ok">○ わかる</button>
+        <button id="wrongBtn" class="btn-ng">× わからない</button>
         <button id="repeatBtn">再読</button>
         <button id="pauseBtn">停止 / 再開</button>
         <button id="resetBtn">リセット</button>
+        <button id="retryWrongBtn">×だけ再テスト</button>
+        <button id="focusOpenBtn">全画面表示</button>
       </div>
     </div>
   </div>
 
   <div class="panel hide-in-focus">
-    <div style="font-weight:900; margin-bottom:8px;">設定</div>
+    <div class="section-title">設定</div>
     <div class="grid-2">
       <div>回答制限(ms)<input type="number" id="answerLimit" value="1200" min="100" step="100"></div>
       <div>英語速度<input type="number" id="rateEn" value="1.4" step="0.1"></div>
@@ -480,6 +507,15 @@ system,システム</textarea>
       <div>日本語音声<select id="voiceJa"></select></div>
       <div>文字サイズ(英語)<input type="number" id="enFontScale" value="100" min="70" max="180" step="5"></div>
       <div>文字サイズ(日本語)<input type="number" id="jaFontScale" value="100" min="70" max="180" step="5"></div>
+    </div>
+
+    <div class="toggle-line">
+      <input type="checkbox" id="showJapaneseAfterEnglish" checked>
+      <label for="showJapaneseAfterEnglish">英語読上げ後に日本語を表示</label>
+    </div>
+    <div class="toggle-line">
+      <input type="checkbox" id="speakJapanese" checked>
+      <label for="speakJapanese">日本語も読み上げる</label>
     </div>
     <div class="toggle-line">
       <input type="checkbox" id="enableTap" checked>
@@ -495,25 +531,41 @@ system,システム</textarea>
     </div>
     <div class="toggle-line">
       <input type="checkbox" id="enableVibration" checked>
-      <label for="enableVibration">判定時に軽く振動（対応端末のみ）</label>
+      <label for="enableVibration">判定時に軽く振動</label>
     </div>
     <div class="toggle-line">
       <input type="checkbox" id="keepScreenAwake" checked>
       <label for="keepScreenAwake">学習中は画面スリープを抑える</label>
     </div>
-  </div>
-
-  <div class="panel hide-in-focus">
-    <div class="row">
-      <span class="help-chip">iPhone: 最初の「開始」で音声許可を安定化</span>
-      <span class="help-chip">Android: スワイプ・振動が使いやすい</span>
-      <span class="help-chip">GitHub Pagesでも動作</span>
+    <div class="toggle-line">
+      <input type="checkbox" id="persistData" checked>
+      <label for="persistData">入力内容と設定を自動保存</label>
     </div>
   </div>
 
   <div class="panel hide-in-focus">
-    <div style="font-weight:900; margin-bottom:8px;">今回結果</div>
-    <textarea id="sessionSummaryArea" readonly style="height:220px;"></textarea>
+    <div class="row">
+      <span class="help-chip">iPhone: 最初の開始で音声許可が安定</span>
+      <span class="help-chip">Android: 振動とスワイプが使いやすい</span>
+      <span class="help-chip">GitHub Pagesでも動作</span>
+      <span class="help-chip">単語リストは自動保存</span>
+    </div>
+  </div>
+
+  <div class="panel hide-in-focus">
+    <div class="section-title">今回結果</div>
+    <textarea id="sessionSummaryArea" class="copy-area" readonly></textarea>
+    <div class="copy-actions">
+      <button id="copySessionBtn">結果コピー</button>
+      <button id="copyWrongBtn">間違いだけコピー</button>
+      <button id="copyWrongHeaderBtn">間違いだけ見出し付きコピー</button>
+    </div>
+  </div>
+
+  <div class="panel hide-in-focus">
+    <div class="section-title">間違えた単語だけ</div>
+    <textarea id="wrongOnlyArea" class="copy-area" readonly></textarea>
+    <div class="small">そのままコピペしやすい english,japanese 形式</div>
   </div>
 
 </div>
@@ -549,7 +601,7 @@ system,システム</textarea>
     <div class="focus-buttons">
       <button id="focusCorrectBtn" class="btn-ok">○ わかる</button>
       <button id="focusWrongBtn" class="btn-ng">× わからない</button>
-      <button id="focusRepeatBtn" class="btn-rep wide">再読</button>
+      <button id="focusRepeatBtn" class="wide">再読</button>
       <button id="focusPauseBtn" class="btn-sub">停止 / 再開</button>
       <button id="focusCloseBtn" class="btn-sub">通常表示へ戻る</button>
     </div>
@@ -562,16 +614,21 @@ system,システム</textarea>
 </div>
 
 <script>
+const STORAGE_KEY = "vocab_audio_trainer_mobile_plus_v1";
+
 const importArea = document.getElementById("importArea");
 const fileInput = document.getElementById("fileInput");
 const loadBtn = document.getElementById("loadBtn");
-const copySessionBtn = document.getElementById("copySessionBtn");
+const copyAllWordsBtn = document.getElementById("copyAllWordsBtn");
+
 const startBtn = document.getElementById("startBtn");
 const correctBtn = document.getElementById("correctBtn");
 const wrongBtn = document.getElementById("wrongBtn");
 const repeatBtn = document.getElementById("repeatBtn");
 const pauseBtn = document.getElementById("pauseBtn");
 const resetBtn = document.getElementById("resetBtn");
+const retryWrongBtn = document.getElementById("retryWrongBtn");
+const focusOpenBtn = document.getElementById("focusOpenBtn");
 
 const answerLimitInput = document.getElementById("answerLimit");
 const rateEnInput = document.getElementById("rateEn");
@@ -580,11 +637,15 @@ const voiceEnSelect = document.getElementById("voiceEn");
 const voiceJaSelect = document.getElementById("voiceJa");
 const enFontScale = document.getElementById("enFontScale");
 const jaFontScale = document.getElementById("jaFontScale");
+
+const showJapaneseAfterEnglish = document.getElementById("showJapaneseAfterEnglish");
+const speakJapanese = document.getElementById("speakJapanese");
 const enableTap = document.getElementById("enableTap");
 const enableSwipe = document.getElementById("enableSwipe");
 const autoEnterFullscreen = document.getElementById("autoEnterFullscreen");
 const enableVibration = document.getElementById("enableVibration");
 const keepScreenAwake = document.getElementById("keepScreenAwake");
+const persistData = document.getElementById("persistData");
 
 const progressBar = document.getElementById("progressBar");
 const qNumEl = document.getElementById("qNum");
@@ -595,11 +656,17 @@ const statusEl = document.getElementById("status");
 const timerEl = document.getElementById("timer");
 const englishWord = document.getElementById("englishWord");
 const japaneseWord = document.getElementById("japaneseWord");
+const subMeaning = document.getElementById("subMeaning");
 const correctCountEl = document.getElementById("correctCount");
 const wrongCountEl = document.getElementById("wrongCount");
 const accuracyEl = document.getElementById("accuracy");
 const elapsedText = document.getElementById("elapsedText");
 const sessionSummaryArea = document.getElementById("sessionSummaryArea");
+const wrongOnlyArea = document.getElementById("wrongOnlyArea");
+
+const copySessionBtn = document.getElementById("copySessionBtn");
+const copyWrongBtn = document.getElementById("copyWrongBtn");
+const copyWrongHeaderBtn = document.getElementById("copyWrongHeaderBtn");
 
 const focusMode = document.getElementById("focusMode");
 const focusProgressBar = document.getElementById("focusProgressBar");
@@ -676,7 +743,10 @@ function parseWords(text){
     .filter(v => v)
     .map(line => {
       const parts = line.includes("\t") ? line.split("\t") : line.split(",");
-      return { en:(parts[0] || "").trim(), ja:parts.slice(1).join(",").trim() };
+      return {
+        en:(parts[0] || "").trim(),
+        ja:parts.slice(1).join(",").trim()
+      };
     })
     .filter(v => v.en && v.ja);
 }
@@ -704,11 +774,11 @@ function populateVoices(){
   const enVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
   const jaVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("ja"));
 
-  enVoices.forEach((v) => {
+  enVoices.forEach(v => {
     const i = voices.indexOf(v);
     voiceEnSelect.add(new Option(`${v.name} (${v.lang})`, i));
   });
-  jaVoices.forEach((v) => {
+  jaVoices.forEach(v => {
     const i = voices.indexOf(v);
     voiceJaSelect.add(new Option(`${v.name} (${v.lang})`, i));
   });
@@ -746,6 +816,7 @@ function updateWordUI(en, ja){
   japaneseWord.textContent = ja || "";
   focusEnglish.textContent = en || "---";
   focusJapanese.textContent = ja || "";
+  subMeaning.textContent = ja ? "意味を表示中" : "まだ意味は非表示";
 }
 function setStatus(text){
   statusEl.textContent = text;
@@ -782,9 +853,21 @@ function getWrongWordsInOriginalOrder(){
     .filter(w => wrongSet.has(`${w.en}\t${w.ja}`))
     .map(w => `${w.en},${w.ja}`);
 }
+function buildWrongOnlyText(withHeader=false){
+  const lines = getWrongWordsInOriginalOrder();
+  if(withHeader){
+    const top = [
+      `作成日時,${formatDateTime(new Date())}`,
+      "これはまちがえた単語です"
+    ];
+    return [...top, ...lines].join("\n");
+  }
+  return lines.join("\n");
+}
 function buildSessionSummary(){
   if(!startTime && results.length === 0){
     sessionSummaryArea.value = "";
+    wrongOnlyArea.value = "";
     return;
   }
   const c = results.filter(r => r.result === "○").length;
@@ -806,7 +889,9 @@ function buildSessionSummary(){
   lines.push("ミス単語");
   if(wrongLines.length) lines.push(...wrongLines);
   else lines.push("(なし)");
+
   sessionSummaryArea.value = lines.join("\n");
+  wrongOnlyArea.value = buildWrongOnlyText(false);
 }
 function updateStats(){
   const c = results.filter(r => r.result === "○").length;
@@ -849,60 +934,80 @@ async function exitFocusMode(){
   document.body.classList.remove("focus-running");
   await releaseWakeLock();
 }
-function setCopyButtonState(){
-  copySessionBtn.disabled = results.length === 0 && !startTime;
-}
-async function copyTextFallback(text){
-  const temp = document.createElement("textarea");
-  temp.value = text;
-  temp.style.position = "fixed";
-  temp.style.left = "-9999px";
-  document.body.appendChild(temp);
-  temp.focus();
-  temp.select();
-  let ok = false;
-  try{ ok = document.execCommand("copy"); }catch{ ok = false; }
-  document.body.removeChild(temp);
-  return ok;
-}
-async function copySessionSummary(){
-  buildSessionSummary();
-  const text = sessionSummaryArea.value;
+async function copyText(text){
   let ok = false;
   try{
     await navigator.clipboard.writeText(text);
     ok = true;
   }catch{
-    ok = await copyTextFallback(text);
+    const temp = document.createElement("textarea");
+    temp.value = text;
+    temp.style.position = "fixed";
+    temp.style.left = "-9999px";
+    document.body.appendChild(temp);
+    temp.focus();
+    temp.select();
+    try{ ok = document.execCommand("copy"); }catch{ ok = false; }
+    document.body.removeChild(temp);
   }
-  setStatus(ok ? "今回結果をコピーしました" : "コピー失敗");
+  setStatus(ok ? "コピーしました" : "コピー失敗");
 }
-async function resetSessionData(){
-  await exitFocusMode();
-  results = [];
-  queue = [];
-  current = null;
-  questionIndex = 0;
-  totalInSession = 0;
-  running = false;
-  paused = false;
-  acceptingAnswer = false;
-  answeredThisQuestion = false;
-  startTime = null;
-  endTime = null;
-  clearAllTimers();
-  updateWordUI("---", "");
-  setStatus("待機中");
-  setTimerText("");
-  updateProgress();
-  updateTimeDisplays();
-  updateStats();
-  setCopyButtonState();
+function saveState(){
+  if(!persistData.checked) return;
+  const data = {
+    importArea: importArea.value,
+    answerLimit: answerLimitInput.value,
+    rateEn: rateEnInput.value,
+    rateJa: rateJaInput.value,
+    voiceEn: voiceEnSelect.value,
+    voiceJa: voiceJaSelect.value,
+    enFontScale: enFontScale.value,
+    jaFontScale: jaFontScale.value,
+    showJapaneseAfterEnglish: showJapaneseAfterEnglish.checked,
+    speakJapanese: speakJapanese.checked,
+    enableTap: enableTap.checked,
+    enableSwipe: enableSwipe.checked,
+    autoEnterFullscreen: autoEnterFullscreen.checked,
+    enableVibration: enableVibration.checked,
+    keepScreenAwake: keepScreenAwake.checked,
+    persistData: persistData.checked
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+function restoreState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    if(typeof d.importArea === "string") importArea.value = d.importArea;
+    if(d.answerLimit != null) answerLimitInput.value = d.answerLimit;
+    if(d.rateEn != null) rateEnInput.value = d.rateEn;
+    if(d.rateJa != null) rateJaInput.value = d.rateJa;
+    if(d.enFontScale != null) enFontScale.value = d.enFontScale;
+    if(d.jaFontScale != null) jaFontScale.value = d.jaFontScale;
+    if(d.showJapaneseAfterEnglish != null) showJapaneseAfterEnglish.checked = d.showJapaneseAfterEnglish;
+    if(d.speakJapanese != null) speakJapanese.checked = d.speakJapanese;
+    if(d.enableTap != null) enableTap.checked = d.enableTap;
+    if(d.enableSwipe != null) enableSwipe.checked = d.enableSwipe;
+    if(d.autoEnterFullscreen != null) autoEnterFullscreen.checked = d.autoEnterFullscreen;
+    if(d.enableVibration != null) enableVibration.checked = d.enableVibration;
+    if(d.keepScreenAwake != null) keepScreenAwake.checked = d.keepScreenAwake;
+    if(d.persistData != null) persistData.checked = d.persistData;
+  }catch{}
 }
 function loadWords(){
   allWords = parseWords(importArea.value);
   setStatus(allWords.length ? `更新完了: ${allWords.length}件` : "単語がありません");
+  saveState();
   buildSessionSummary();
+}
+function revealJapanese(){
+  if(!current) return;
+  if(showJapaneseAfterEnglish.checked){
+    japaneseWord.textContent = current.ja;
+    focusJapanese.textContent = current.ja;
+    subMeaning.textContent = "意味を表示中";
+  }
 }
 function readCurrentWordAgain(){
   if(!current || paused || !running) return;
@@ -913,14 +1018,19 @@ function readCurrentWordAgain(){
   setTimerText("");
   japaneseWord.textContent = "";
   focusJapanese.textContent = "";
+  subMeaning.textContent = "まだ意味は非表示";
+
   speak(current.en, "en-US", rateEnInput.value, voiceEnSelect.value, () => {
     if(paused || !running) return;
-    japaneseWord.textContent = current.ja;
-    focusJapanese.textContent = current.ja;
+
+    revealJapanese();
     acceptingAnswer = true;
     setStatus("回答受付中");
     startAnswerTimer();
-    speak(current.ja, "ja-JP", rateJaInput.value, voiceJaSelect.value);
+
+    if(speakJapanese.checked){
+      speak(current.ja, "ja-JP", rateJaInput.value, voiceJaSelect.value);
+    }
   });
 }
 function startAnswerTimer(){
@@ -958,24 +1068,28 @@ function nextWord(){
 
   speak(current.en, "en-US", rateEnInput.value, voiceEnSelect.value, () => {
     if(paused || !running) return;
-    japaneseWord.textContent = current.ja;
-    focusJapanese.textContent = current.ja;
+
+    revealJapanese();
     acceptingAnswer = true;
     setStatus("回答受付中");
     startAnswerTimer();
-    speak(current.ja, "ja-JP", rateJaInput.value, voiceJaSelect.value);
+
+    if(speakJapanese.checked){
+      speak(current.ja, "ja-JP", rateJaInput.value, voiceJaSelect.value);
+    }
   });
 }
-async function startTest(){
+async function startSession(wordList){
   unlockIOSAudio();
   allWords = parseWords(importArea.value);
-  if(!allWords.length){
+
+  if(!wordList || !wordList.length){
     setStatus("単語がありません");
     return;
   }
 
   results = [];
-  queue = shuffle(allWords);
+  queue = shuffle(wordList);
   current = null;
   questionIndex = 0;
   totalInSession = queue.length;
@@ -990,12 +1104,29 @@ async function startTest(){
   updateProgress();
   updateTimeDisplays();
   startElapsedTimer();
-  setCopyButtonState();
+  saveState();
 
   if(autoEnterFullscreen.checked){
     await enterFocusMode();
   }
   nextWord();
+}
+async function startTest(){
+  const words = parseWords(importArea.value);
+  await startSession(words);
+}
+async function startWrongOnlyTest(){
+  const wrongLines = getWrongWordsInOriginalOrder();
+  const words = wrongLines.map(line => {
+    const parts = line.split(",");
+    return { en: (parts[0] || "").trim(), ja: parts.slice(1).join(",").trim() };
+  }).filter(v => v.en && v.ja);
+
+  if(!words.length){
+    setStatus("間違えた単語がありません");
+    return;
+  }
+  await startSession(words);
 }
 async function finishSession(){
   running = false;
@@ -1008,7 +1139,6 @@ async function finishSession(){
   updateStats();
   setStatus("終了");
   setTimerText("");
-  setCopyButtonState();
   await exitFocusMode();
 }
 function pauseOrResume(){
@@ -1027,7 +1157,7 @@ function pauseOrResume(){
     else nextWord();
   }
 }
-function submitAnswer(mark, isTimeout = false){
+function submitAnswer(mark, isTimeout=false){
   if(!current || !running || paused || !acceptingAnswer || answeredThisQuestion) return;
 
   answeredThisQuestion = true;
@@ -1055,13 +1185,33 @@ function submitAnswer(mark, isTimeout = false){
   }
 
   updateStats();
-  setCopyButtonState();
 
   setTimeout(() => {
     if(running && !paused) nextWord();
   }, 220);
 }
-
+async function resetSessionData(){
+  await exitFocusMode();
+  results = [];
+  queue = [];
+  current = null;
+  questionIndex = 0;
+  totalInSession = 0;
+  running = false;
+  paused = false;
+  acceptingAnswer = false;
+  answeredThisQuestion = false;
+  startTime = null;
+  endTime = null;
+  clearAllTimers();
+  updateWordUI("---", "");
+  subMeaning.textContent = "開始するとここに意味が出ます";
+  setStatus("待機中");
+  setTimerText("");
+  updateProgress();
+  updateTimeDisplays();
+  updateStats();
+}
 fileInput.addEventListener("change", (e) => {
   const file = e.target.files?.[0];
   if(!file) return;
@@ -1069,18 +1219,29 @@ fileInput.addEventListener("change", (e) => {
   reader.onload = () => {
     importArea.value = String(reader.result || "");
     loadWords();
+    saveState();
   };
   reader.readAsText(file, "UTF-8");
 });
 
 loadBtn.onclick = loadWords;
-copySessionBtn.onclick = copySessionSummary;
+copyAllWordsBtn.onclick = () => copyText(importArea.value);
+
+copySessionBtn.onclick = () => {
+  buildSessionSummary();
+  copyText(sessionSummaryArea.value);
+};
+copyWrongBtn.onclick = () => copyText(buildWrongOnlyText(false));
+copyWrongHeaderBtn.onclick = () => copyText(buildWrongOnlyText(true));
+
 startBtn.onclick = startTest;
 correctBtn.onclick = () => submitAnswer("○");
 wrongBtn.onclick = () => submitAnswer("×");
 repeatBtn.onclick = readCurrentWordAgain;
 pauseBtn.onclick = pauseOrResume;
 resetBtn.onclick = resetSessionData;
+retryWrongBtn.onclick = startWrongOnlyTest;
+focusOpenBtn.onclick = enterFocusMode;
 
 focusCorrectBtn.onclick = () => submitAnswer("○");
 focusWrongBtn.onclick = () => submitAnswer("×");
@@ -1160,10 +1321,32 @@ document.addEventListener("visibilitychange", async () => {
   }
 });
 
-speechSynthesis.onvoiceschanged = populateVoices;
+[
+  importArea, answerLimitInput, rateEnInput, rateJaInput,
+  enFontScale, jaFontScale,
+  showJapaneseAfterEnglish, speakJapanese,
+  enableTap, enableSwipe, autoEnterFullscreen,
+  enableVibration, keepScreenAwake, persistData
+].forEach(el => {
+  el.addEventListener("input", saveState);
+  el.addEventListener("change", saveState);
+});
+
+speechSynthesis.onvoiceschanged = () => {
+  populateVoices();
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const d = JSON.parse(raw);
+      if(d.voiceEn != null) voiceEnSelect.value = d.voiceEn;
+      if(d.voiceJa != null) voiceJaSelect.value = d.voiceJa;
+    }
+  }catch{}
+};
+
+restoreState();
 populateVoices();
 applyFontScale();
-
 enFontScale.addEventListener("input", applyFontScale);
 jaFontScale.addEventListener("input", applyFontScale);
 
