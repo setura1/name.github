@@ -4,19 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#2563eb">
-<title>touch_vocab_copy_paste_ready.html</title>
+<title>touch_vocab_rebuild.html</title>
 <style>
 :root{
-  --bg:#eef3fb;
+  --bg:#eef4ff;
   --panel:#ffffff;
-  --line:#d9e2f0;
+  --line:#d8e3f2;
   --text:#17212f;
   --muted:#667085;
   --accent:#2563eb;
-  --accent2:#1d4ed8;
+  --accent-dark:#1d4ed8;
   --ok:#ecfdf3;
   --ng:#fff1f2;
-  --tm:#fff7e8;
 }
 *{
   box-sizing:border-box;
@@ -35,9 +34,92 @@ body{
   overflow:hidden;
   touch-action:manipulation;
 }
-body.flash-correct{ background:var(--ok); }
-body.flash-wrong{ background:var(--ng); }
-body.flash-timeout{ background:var(--tm); }
+body.flash-ok{ background:var(--ok); }
+body.flash-ng{ background:var(--ng); }
+
+#setup{
+  position:fixed;
+  inset:0;
+  z-index:20;
+  overflow:auto;
+  background:rgba(238,244,255,.98);
+  padding:
+    max(10px, env(safe-area-inset-top))
+    10px
+    max(12px, env(safe-area-inset-bottom))
+    10px;
+}
+.setup-panel{
+  max-width:900px;
+  margin:0 auto;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+}
+.setup-title{
+  font-size:20px;
+  font-weight:900;
+  margin-bottom:4px;
+}
+.small{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.5;
+}
+.section{
+  margin-top:14px;
+}
+.section-title{
+  font-size:15px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+textarea,input[type="number"],input[type="text"],select,input[type="file"]{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  background:#fff;
+  color:var(--text);
+  font-size:16px;
+}
+textarea{
+  resize:vertical;
+  min-height:180px;
+  line-height:1.5;
+}
+.row{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:8px;
+}
+.row3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:8px;
+}
+button{
+  min-height:54px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  color:var(--text);
+  font-size:16px;
+  font-weight:900;
+  padding:10px 12px;
+}
+.btn-main{
+  background:linear-gradient(180deg,#2f76ff,#1d4ed8);
+  color:#fff;
+  border-color:#1d4ed8;
+}
+#wrongArea,#resultArea{
+  min-height:120px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
 
 #app{
   width:100%;
@@ -50,7 +132,6 @@ body.flash-timeout{ background:var(--tm); }
     max(12px, env(safe-area-inset-bottom))
     10px;
 }
-
 .topbar{
   flex:0 0 auto;
   background:var(--panel);
@@ -58,35 +139,34 @@ body.flash-timeout{ background:var(--tm); }
   border-radius:18px;
   padding:10px;
 }
-
-.progress-wrap{
+.progress-bg{
   width:100%;
   height:12px;
-  background:#e8edf6;
+  background:#e7eef9;
   border-radius:999px;
   overflow:hidden;
 }
 #progressBar{
-  width:0%;
   height:100%;
+  width:0%;
   background:var(--accent);
   transition:width .18s ease;
 }
 .meta{
   margin-top:8px;
   display:flex;
-  justify-content:space-between;
-  gap:8px;
   flex-wrap:wrap;
+  gap:8px 12px;
+  justify-content:space-between;
   font-size:13px;
 }
 #status{
-  margin-top:6px;
+  margin-top:8px;
   font-size:16px;
   font-weight:900;
 }
 #timer{
-  margin-top:2px;
+  margin-top:4px;
   font-size:15px;
   color:#b42318;
   font-weight:900;
@@ -105,27 +185,23 @@ body.flash-timeout{ background:var(--tm); }
   align-items:center;
   justify-content:center;
   text-align:center;
-  user-select:none;
 }
-
-.zone-left,
-.zone-right,
-.zone-center{
+.touch-zone{
   position:absolute;
   top:0;
   bottom:0;
+  z-index:1;
 }
-.zone-left{ left:0; width:35%; }
-.zone-right{ right:0; width:35%; }
-.zone-center{ left:35%; width:30%; }
+#zoneLeft{ left:0; width:33.33%; }
+#zoneCenter{ left:33.33%; width:33.34%; }
+#zoneRight{ right:0; width:33.33%; }
 
 .word-wrap{
   position:relative;
   z-index:2;
   width:100%;
-  padding:24px 14px;
+  padding:26px 14px;
 }
-
 .badge{
   display:inline-block;
   font-size:11px;
@@ -137,17 +213,15 @@ body.flash-timeout{ background:var(--tm); }
   margin-bottom:12px;
   font-weight:800;
 }
-
 #englishWord{
-  font-size:32px;
+  font-size:34px;
   line-height:1.3;
   font-weight:900;
   word-break:break-word;
   overflow-wrap:anywhere;
 }
-
 #japaneseWord{
-  margin-top:14px;
+  margin-top:16px;
   font-size:22px;
   line-height:1.45;
   color:#475467;
@@ -155,12 +229,52 @@ body.flash-timeout{ background:var(--tm); }
   word-break:break-word;
   overflow-wrap:anywhere;
 }
-
 #hint{
   margin-top:12px;
   font-size:12px;
   color:var(--muted);
   line-height:1.5;
+}
+.floating{
+  position:absolute;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:3;
+  font-size:11px;
+  color:#667085;
+  background:#f8fafc;
+  border:1px solid #e2e8f2;
+  border-radius:999px;
+  padding:4px 10px;
+  white-space:nowrap;
+  max-width:92%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.action-bar{
+  flex:0 0 auto;
+  margin-top:10px;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+}
+.big-btn{
+  min-height:64px;
+  font-size:19px;
+  border-radius:18px;
+}
+.ng-btn{
+  background:#fff;
+}
+.center-btn{
+  background:#f8fbff;
+}
+.ok-btn{
+  background:linear-gradient(180deg,#2f76ff,#1d4ed8);
+  color:#fff;
+  border-color:#1d4ed8;
 }
 
 .bottom{
@@ -187,195 +301,108 @@ body.flash-timeout{ background:var(--tm); }
   font-weight:900;
 }
 
-.floating{
-  position:absolute;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:3;
-  font-size:11px;
-  color:#667085;
-  background:#f8fafc;
-  border:1px solid #e2e8f2;
-  border-radius:999px;
-  padding:4px 10px;
-  white-space:nowrap;
-  max-width:92%;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-#setup{
-  position:fixed;
-  inset:0;
-  background:rgba(238,243,251,.98);
-  z-index:20;
-  overflow:auto;
-  padding:
-    max(10px, env(safe-area-inset-top))
-    10px
-    max(12px, env(safe-area-inset-bottom))
-    10px;
-}
-.setup-panel{
-  max-width:900px;
-  margin:0 auto;
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:12px;
-}
-.setup-title{
-  font-size:18px;
-  font-weight:900;
-}
-.small{
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.5;
-}
-.section-title{
-  font-size:15px;
-  font-weight:900;
-  margin-top:12px;
-  margin-bottom:8px;
-}
-textarea,input[type="number"],select,input[type="file"],input[type="text"]{
-  width:100%;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:10px;
-  background:#fff;
-  color:var(--text);
-  font-size:16px;
-  margin-top:8px;
-}
-textarea{
-  min-height:180px;
-  resize:vertical;
-  line-height:1.45;
-}
-.row{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
-  margin-top:8px;
-}
-.row-3{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-top:8px;
-}
-button{
-  min-height:54px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  background:#fff;
-  color:var(--text);
-  font-size:16px;
-  font-weight:900;
-  padding:10px 12px;
-}
-.btn-main{
-  background:linear-gradient(180deg,#2f76ff,#1d4ed8);
-  color:#fff;
-  border-color:#1d4ed8;
-}
-#resultArea,#wrongArea{
-  margin-top:10px;
-  min-height:120px;
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-}
 @media (max-width:480px){
   #englishWord{ font-size:28px; }
   #japaneseWord{ font-size:20px; }
+  .row,.row3{ grid-template-columns:1fr; }
   .bottom{ grid-template-columns:repeat(2,1fr); }
-  .row,.row-3{ grid-template-columns:1fr; }
+  .action-bar{ grid-template-columns:1fr; }
 }
 </style>
 </head>
 <body>
+
 <div id="setup">
   <div class="setup-panel">
     <div class="setup-title">タッチ専用 英単語カード</div>
-    <div class="small">開始後は基本タッチだけで操作します。左タップ = ×、右タップ = ○、中央タップ = 次へ、上スワイプ = 再読、長押し = 停止/再開、2本指タップ = 設定を開く</div>
+    <div class="small">停止機能なし。左タップまたは左ボタンで ×、右タップまたは右ボタンで ○、中央タップまたは中央ボタンで再読・次へ。2本指タップで設定画面を開けます。</div>
 
-    <div class="section-title">単語リスト</div>
-    <textarea id="importArea">apple,りんご
+    <div class="section">
+      <div class="section-title">単語リスト</div>
+      <textarea id="importArea">apple,りんご
 engineer,技術者
 design,設計
 analysis,分析
 system,システム</textarea>
-
-    <input type="file" id="fileInput" accept=".csv,.txt,text/plain">
-
-    <div class="section-title">単語を追加</div>
-    <div class="row">
-      <input type="text" id="addEn" placeholder="English">
-      <input type="text" id="addJa" placeholder="日本語">
-    </div>
-    <div class="row">
-      <button id="addWordBtn" class="btn-main">単語を追加</button>
-      <button id="clearAddBtn">入力欄クリア</button>
+      <input type="file" id="fileInput" accept=".csv,.txt,text/plain" style="margin-top:8px;">
     </div>
 
-    <div class="section-title">設定</div>
-    <div class="row">
-      <div>
-        <div class="small">回答制限(ms)</div>
-        <input type="number" id="answerLimit" value="1500" min="100" step="100">
+    <div class="section">
+      <div class="section-title">単語を追加</div>
+      <div class="row">
+        <input type="text" id="addEn" placeholder="English">
+        <input type="text" id="addJa" placeholder="日本語">
       </div>
-      <div>
-        <div class="small">英語速度</div>
-        <input type="number" id="rateEn" value="1.2" step="0.1">
-      </div>
-      <div>
-        <div class="small">日本語速度</div>
-        <input type="number" id="rateJa" value="1.2" step="0.1">
-      </div>
-      <div>
-        <div class="small">日本語も読み上げる</div>
-        <select id="speakJapanese">
-          <option value="yes" selected>yes</option>
-          <option value="no">no</option>
-        </select>
-      </div>
-      <div>
-        <div class="small">英語音声</div>
-        <select id="voiceEn"></select>
-      </div>
-      <div>
-        <div class="small">日本語音声</div>
-        <select id="voiceJa"></select>
+      <div class="row">
+        <button id="addWordBtn" class="btn-main">単語を追加</button>
+        <button id="clearAddBtn">入力欄クリア</button>
       </div>
     </div>
 
-    <div class="row">
-      <button id="startBtn" class="btn-main">開始</button>
-      <button id="closeSetupBtn">設定を閉じる</button>
+    <div class="section">
+      <div class="section-title">設定</div>
+      <div class="row">
+        <div>
+          <div class="small">回答制限(ms)</div>
+          <input type="number" id="answerLimit" value="1500" min="100" step="100">
+        </div>
+        <div>
+          <div class="small">英語速度</div>
+          <input type="number" id="rateEn" value="1.2" step="0.1">
+        </div>
+        <div>
+          <div class="small">日本語速度</div>
+          <input type="number" id="rateJa" value="1.1" step="0.1">
+        </div>
+        <div>
+          <div class="small">日本語も読み上げる</div>
+          <select id="speakJapanese">
+            <option value="yes" selected>yes</option>
+            <option value="no">no</option>
+          </select>
+        </div>
+        <div>
+          <div class="small">英語音声</div>
+          <select id="voiceEn"></select>
+        </div>
+        <div>
+          <div class="small">日本語音声</div>
+          <select id="voiceJa"></select>
+        </div>
+      </div>
     </div>
 
-    <div class="section-title">間違えた単語だけ</div>
-    <textarea id="wrongArea" readonly></textarea>
-    <div class="row-3">
-      <button id="copyWrongBtn">間違いだけコピー</button>
-      <button id="replaceImportWithWrongBtn">間違いで置き換え</button>
-      <button id="appendWrongToImportBtn">間違いを追記</button>
+    <div class="section">
+      <div class="row">
+        <button id="startBtn" class="btn-main">開始</button>
+        <button id="closeSetupBtn">設定を閉じる</button>
+      </div>
     </div>
 
-    <div class="section-title">今回結果</div>
-    <textarea id="resultArea" readonly></textarea>
-    <div class="row">
-      <button id="copyResultBtn">結果コピー</button>
-      <button id="copyWrongHeaderBtn">見出し付きでコピー</button>
+    <div class="section">
+      <div class="section-title">間違えた単語だけ</div>
+      <textarea id="wrongArea" readonly></textarea>
+      <div class="row3">
+        <button id="copyWrongBtn">間違いだけコピー</button>
+        <button id="replaceImportWithWrongBtn">間違いで置き換え</button>
+        <button id="appendWrongToImportBtn">間違いを追記</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">今回結果</div>
+      <textarea id="resultArea" readonly></textarea>
+      <div class="row">
+        <button id="copyResultBtn">結果コピー</button>
+        <button id="copyWrongHeaderBtn">見出し付きでコピー</button>
+      </div>
     </div>
   </div>
 </div>
 
 <div id="app">
   <div class="topbar">
-    <div class="progress-wrap"><div id="progressBar"></div></div>
+    <div class="progress-bg"><div id="progressBar"></div></div>
     <div class="meta">
       <div># <span id="qNum">0</span> / <span id="qTotal">0</span></div>
       <div>○ <span id="correctCount">0</span></div>
@@ -387,29 +414,35 @@ system,システム</textarea>
   </div>
 
   <div id="card">
-    <div class="floating">左 × / 右 ○ / 中央 次へ / 上スワイプ 再読 / 長押し 停止</div>
-    <div class="zone-left" id="zoneLeft"></div>
-    <div class="zone-center" id="zoneCenter"></div>
-    <div class="zone-right" id="zoneRight"></div>
+    <div class="floating">左 × / 中央 再読・次へ / 右 ○</div>
+    <div class="touch-zone" id="zoneLeft"></div>
+    <div class="touch-zone" id="zoneCenter"></div>
+    <div class="touch-zone" id="zoneRight"></div>
 
     <div class="word-wrap">
       <div class="badge">現在の単語</div>
       <div id="englishWord">---</div>
       <div id="japaneseWord">---</div>
-      <div id="hint">2本指タップで設定画面を開けます</div>
+      <div id="hint">2本指タップで設定画面</div>
     </div>
+  </div>
+
+  <div class="action-bar">
+    <button id="wrongBtn" class="big-btn ng-btn">× わからない</button>
+    <button id="centerBtn" class="big-btn center-btn">再読 / 次へ</button>
+    <button id="correctBtn" class="big-btn ok-btn">○ わかる</button>
   </div>
 
   <div class="bottom">
     <div class="stat"><div class="label">開始</div><div class="value" id="startTimeText">--:--</div></div>
     <div class="stat"><div class="label">終了</div><div class="value" id="endTimeText">--:--</div></div>
     <div class="stat"><div class="label">経過</div><div class="value" id="elapsedText">0s</div></div>
-    <div class="stat"><div class="label">状態</div><div class="value" id="pauseState">RUN</div></div>
+    <div class="stat"><div class="label">状態</div><div class="value" id="runState">RUN</div></div>
   </div>
 </div>
 
 <script>
-const STORAGE_KEY = "touch_only_vocab_v2";
+const STORAGE_KEY = "touch_vocab_rebuild_v1";
 
 const setup = document.getElementById("setup");
 const importArea = document.getElementById("importArea");
@@ -449,12 +482,14 @@ const japaneseWord = document.getElementById("japaneseWord");
 const startTimeText = document.getElementById("startTimeText");
 const endTimeText = document.getElementById("endTimeText");
 const elapsedText = document.getElementById("elapsedText");
-const pauseState = document.getElementById("pauseState");
+const runState = document.getElementById("runState");
 
-const card = document.getElementById("card");
 const zoneLeft = document.getElementById("zoneLeft");
 const zoneCenter = document.getElementById("zoneCenter");
 const zoneRight = document.getElementById("zoneRight");
+const wrongBtn = document.getElementById("wrongBtn");
+const centerBtn = document.getElementById("centerBtn");
+const correctBtn = document.getElementById("correctBtn");
 
 let voices = [];
 let allWords = [];
@@ -465,7 +500,6 @@ let questionIndex = 0;
 let totalInSession = 0;
 
 let running = false;
-let paused = false;
 let acceptingAnswer = false;
 let answeredThisQuestion = false;
 let countdownTimer = null;
@@ -474,10 +508,6 @@ let remainingMs = 0;
 let startTime = null;
 let endTime = null;
 
-let touchStartX = 0;
-let touchStartY = 0;
-let longPressTimer = null;
-
 function parseWords(text){
   return text
     .split(/\r?\n/)
@@ -485,7 +515,10 @@ function parseWords(text){
     .filter(Boolean)
     .map(line => {
       const parts = line.includes("\t") ? line.split("\t") : line.split(",");
-      return { en:(parts[0] || "").trim(), ja:parts.slice(1).join(",").trim() };
+      return {
+        en: (parts[0] || "").trim(),
+        ja: parts.slice(1).join(",").trim()
+      };
     })
     .filter(v => v.en && v.ja);
 }
@@ -516,96 +549,31 @@ function formatDateTime(d){
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
 }
 
-function flashScreen(type){
-  const cls = `flash-${type}`;
-  document.body.classList.add(cls);
-  setTimeout(() => document.body.classList.remove(cls), 180);
-}
-
-function populateVoices(){
-  voices = speechSynthesis.getVoices();
-  voiceEnSelect.innerHTML = "";
-  voiceJaSelect.innerHTML = "";
-
-  const enVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
-  const jaVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("ja"));
-
-  enVoices.forEach(v => {
-    const i = voices.indexOf(v);
-    voiceEnSelect.add(new Option(`${v.name} (${v.lang})`, i));
-  });
-  jaVoices.forEach(v => {
-    const i = voices.indexOf(v);
-    voiceJaSelect.add(new Option(`${v.name} (${v.lang})`, i));
-  });
-
-  if(enVoices.length === 0) voiceEnSelect.add(new Option("default", ""));
-  if(jaVoices.length === 0) voiceJaSelect.add(new Option("default", ""));
-}
-
-function speak(text, lang, rate, voiceIdx, onend){
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang;
-  u.rate = Number(rate) || 1.0;
-  if(voiceIdx !== "" && voices[voiceIdx]) u.voice = voices[voiceIdx];
-  u.onend = () => { if(typeof onend === "function") onend(); };
-  speechSynthesis.speak(u);
-}
-
-function unlockIOSAudio(){
-  const u = new SpeechSynthesisUtterance(" ");
-  u.volume = 0;
-  try{
-    speechSynthesis.speak(u);
-    speechSynthesis.cancel();
-  }catch{}
-}
-
-function saveState(){
-  const data = {
-    importArea: importArea.value,
-    answerLimit: answerLimitInput.value,
-    rateEn: rateEnInput.value,
-    rateJa: rateJaInput.value,
-    speakJapanese: speakJapaneseSelect.value,
-    voiceEn: voiceEnSelect.value,
-    voiceJa: voiceJaSelect.value
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-function restoreState(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return;
-    const d = JSON.parse(raw);
-    if(typeof d.importArea === "string") importArea.value = d.importArea;
-    if(d.answerLimit != null) answerLimitInput.value = d.answerLimit;
-    if(d.rateEn != null) rateEnInput.value = d.rateEn;
-    if(d.rateJa != null) rateJaInput.value = d.rateJa;
-    if(d.speakJapanese != null) speakJapaneseSelect.value = d.speakJapanese;
-  }catch{}
-}
-
-function updateWord(en, ja){
-  englishWord.textContent = en || "---";
-  japaneseWord.textContent = ja || "---";
-}
-
-function setStatus(text){ statusEl.textContent = text; }
-function setTimer(text){ timerEl.textContent = text; }
-
 function elapsedSeconds(){
   if(!startTime) return 0;
   const last = endTime || new Date();
   return Math.max(0, Math.floor((last - startTime) / 1000));
 }
 
+function flashScreen(type){
+  const cls = type === "ok" ? "flash-ok" : "flash-ng";
+  document.body.classList.add(cls);
+  setTimeout(() => document.body.classList.remove(cls), 180);
+}
+
+function setStatus(text){ statusEl.textContent = text; }
+function setTimer(text){ timerEl.textContent = text; }
+
+function updateWord(en, ja){
+  englishWord.textContent = en || "---";
+  japaneseWord.textContent = ja || "---";
+}
+
 function updateTime(){
   startTimeText.textContent = formatClock(startTime);
   endTimeText.textContent = formatClock(endTime);
   elapsedText.textContent = `${elapsedSeconds()}s`;
-  pauseState.textContent = paused ? "STOP" : "RUN";
+  runState.textContent = running ? "RUN" : "END";
 }
 
 function updateProgress(){
@@ -631,6 +599,7 @@ function buildWrongText(withHeader=false){
   const lines = allWords
     .filter(w => wrongSet.has(`${w.en}\t${w.ja}`))
     .map(w => `${w.en},${w.ja}`);
+
   if(withHeader){
     return [
       `作成日時,${formatDateTime(new Date())}`,
@@ -684,6 +653,71 @@ async function copyText(text){
   setStatus(ok ? "コピーしました" : "コピー失敗");
 }
 
+function saveState(){
+  const data = {
+    importArea: importArea.value,
+    answerLimit: answerLimitInput.value,
+    rateEn: rateEnInput.value,
+    rateJa: rateJaInput.value,
+    speakJapanese: speakJapaneseSelect.value,
+    voiceEn: voiceEnSelect.value,
+    voiceJa: voiceJaSelect.value
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function restoreState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    if(typeof d.importArea === "string") importArea.value = d.importArea;
+    if(d.answerLimit != null) answerLimitInput.value = d.answerLimit;
+    if(d.rateEn != null) rateEnInput.value = d.rateEn;
+    if(d.rateJa != null) rateJaInput.value = d.rateJa;
+    if(d.speakJapanese != null) speakJapaneseSelect.value = d.speakJapanese;
+  }catch{}
+}
+
+function populateVoices(){
+  voices = speechSynthesis.getVoices();
+  voiceEnSelect.innerHTML = "";
+  voiceJaSelect.innerHTML = "";
+
+  const enVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+  const jaVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("ja"));
+
+  enVoices.forEach(v => {
+    const i = voices.indexOf(v);
+    voiceEnSelect.add(new Option(`${v.name} (${v.lang})`, i));
+  });
+  jaVoices.forEach(v => {
+    const i = voices.indexOf(v);
+    voiceJaSelect.add(new Option(`${v.name} (${v.lang})`, i));
+  });
+
+  if(enVoices.length === 0) voiceEnSelect.add(new Option("default", ""));
+  if(jaVoices.length === 0) voiceJaSelect.add(new Option("default", ""));
+}
+
+function speak(text, lang, rate, voiceIdx, onend){
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  u.rate = Number(rate) || 1.0;
+  if(voiceIdx !== "" && voices[voiceIdx]) u.voice = voices[voiceIdx];
+  u.onend = () => { if(typeof onend === "function") onend(); };
+  speechSynthesis.speak(u);
+}
+
+function unlockIOSAudio(){
+  const u = new SpeechSynthesisUtterance(" ");
+  u.volume = 0;
+  try{
+    speechSynthesis.speak(u);
+    speechSynthesis.cancel();
+  }catch{}
+}
+
 function clearSpeechAndTimers(){
   speechSynthesis.cancel();
   clearInterval(countdownTimer);
@@ -699,7 +733,6 @@ function startAnswerTimer(){
   setTimer(`Time: ${(remainingMs / 1000).toFixed(1)}s`);
   clearInterval(countdownTimer);
   countdownTimer = setInterval(() => {
-    if(paused) return;
     remainingMs -= 100;
     setTimer(`Time: ${(Math.max(0, remainingMs) / 1000).toFixed(1)}s`);
     if(remainingMs <= 0){
@@ -710,7 +743,7 @@ function startAnswerTimer(){
 }
 
 function readCurrentWordAgain(){
-  if(!current || !running || paused) return;
+  if(!current || !running) return;
   clearSpeechAndTimers();
   acceptingAnswer = false;
   answeredThisQuestion = false;
@@ -720,7 +753,7 @@ function readCurrentWordAgain(){
 
   speechSynthesis.cancel();
   speak(current.en, "en-US", rateEnInput.value, voiceEnSelect.value, () => {
-    if(paused || !running) return;
+    if(!running) return;
     acceptingAnswer = true;
     setStatus("回答受付中");
     startAnswerTimer();
@@ -731,7 +764,7 @@ function readCurrentWordAgain(){
 }
 
 function nextWord(){
-  if(!running || paused) return;
+  if(!running) return;
   clearSpeechAndTimers();
   acceptingAnswer = false;
   answeredThisQuestion = false;
@@ -750,7 +783,7 @@ function nextWord(){
 
   speechSynthesis.cancel();
   speak(current.en, "en-US", rateEnInput.value, voiceEnSelect.value, () => {
-    if(paused || !running) return;
+    if(!running) return;
     acceptingAnswer = true;
     setStatus("回答受付中");
     startAnswerTimer();
@@ -760,8 +793,46 @@ function nextWord(){
   });
 }
 
+function submitAnswer(mark, isTimeout=false){
+  if(!current || !running || !acceptingAnswer || answeredThisQuestion) return;
+
+  answeredThisQuestion = true;
+  acceptingAnswer = false;
+  clearInterval(countdownTimer);
+
+  results.push({ en: current.en, ja: current.ja, result: mark });
+
+  if(isTimeout){
+    flashScreen("ng");
+    setStatus("時間切れ");
+  }else if(mark === "○"){
+    flashScreen("ok");
+    setStatus("正解");
+  }else{
+    flashScreen("ng");
+    setStatus("不正解");
+  }
+
+  updateStats();
+
+  setTimeout(() => {
+    nextWord();
+  }, 220);
+}
+
+function handleCenterAction(){
+  if(!running) return;
+  if(!current) return;
+  if(answeredThisQuestion){
+    nextWord();
+    return;
+  }
+  readCurrentWordAgain();
+}
+
 async function startSession(){
   unlockIOSAudio();
+
   allWords = parseWords(importArea.value);
   if(!allWords.length){
     setStatus("単語がありません");
@@ -774,7 +845,6 @@ async function startSession(){
   questionIndex = 0;
   totalInSession = queue.length;
   running = true;
-  paused = false;
   acceptingAnswer = false;
   answeredThisQuestion = false;
   startTime = new Date();
@@ -792,7 +862,6 @@ async function startSession(){
 
 function finishSession(){
   running = false;
-  paused = false;
   acceptingAnswer = false;
   answeredThisQuestion = true;
   clearSpeechAndTimers();
@@ -802,58 +871,6 @@ function finishSession(){
   setStatus("終了");
   setTimer("");
   setup.style.display = "block";
-}
-
-function submitAnswer(mark, isTimeout=false){
-  if(!current || !running || paused || !acceptingAnswer || answeredThisQuestion) return;
-
-  answeredThisQuestion = true;
-  acceptingAnswer = false;
-  clearInterval(countdownTimer);
-
-  results.push({ en: current.en, ja: current.ja, result: mark });
-
-  if(isTimeout){
-    flashScreen("timeout");
-    setStatus("時間切れ");
-  }else if(mark === "○"){
-    flashScreen("correct");
-    setStatus("正解");
-  }else{
-    flashScreen("wrong");
-    setStatus("不正解");
-  }
-
-  updateStats();
-
-  setTimeout(() => {
-    if(running && !paused) nextWord();
-  }, 220);
-}
-
-function pauseOrResume(){
-  if(!running) return;
-  if(!paused){
-    paused = true;
-    acceptingAnswer = false;
-    clearSpeechAndTimers();
-    setStatus("停止中");
-    setTimer("停止中");
-  }else{
-    paused = false;
-    setStatus("再開");
-    if(current) readCurrentWordAgain();
-  }
-  updateTime();
-}
-
-function handleCenterTap(){
-  if(!running || paused) return;
-  if(!acceptingAnswer && current){
-    readCurrentWordAgain();
-    return;
-  }
-  if(answeredThisQuestion) nextWord();
 }
 
 function addSingleWord(){
@@ -939,31 +956,16 @@ fileInput.addEventListener("change", (e) => {
 });
 
 zoneLeft.addEventListener("click", () => submitAnswer("×"));
+zoneCenter.addEventListener("click", handleCenterAction);
 zoneRight.addEventListener("click", () => submitAnswer("○"));
-zoneCenter.addEventListener("click", handleCenterTap);
 
-card.addEventListener("touchstart", (e) => {
+wrongBtn.addEventListener("click", () => submitAnswer("×"));
+centerBtn.addEventListener("click", handleCenterAction);
+correctBtn.addEventListener("click", () => submitAnswer("○"));
+
+document.addEventListener("touchstart", (e) => {
   if(e.touches.length === 2){
     setup.style.display = "block";
-    return;
-  }
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-  clearTimeout(longPressTimer);
-  longPressTimer = setTimeout(() => {
-    pauseOrResume();
-  }, 450);
-}, { passive:true });
-
-card.addEventListener("touchend", (e) => {
-  clearTimeout(longPressTimer);
-  if(!running) return;
-
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-
-  if(Math.abs(dy) > Math.abs(dx) && dy < -60){
-    readCurrentWordAgain();
   }
 }, { passive:true });
 
