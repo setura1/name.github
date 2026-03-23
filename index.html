@@ -4,23 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#2563eb">
-<title>vocab_mobile_easy_view.html</title>
+<title>vocab_mobile_restart.html</title>
 <style>
 :root{
   --bg:#eef3fb;
   --panel:#ffffff;
-  --line:#d7e0ef;
+  --line:#d9e2f0;
   --text:#17212f;
   --muted:#667085;
   --accent:#2563eb;
-  --accent-dark:#1d4ed8;
+  --accent2:#1d4ed8;
   --ok:#ecfdf3;
   --ng:#fff1f2;
-  --tm:#fff7e6;
-  --shadow:0 10px 28px rgba(23,33,47,.08);
+  --tm:#fff7e8;
+  --shadow:0 10px 24px rgba(23,33,47,.08);
   --radius:18px;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
 html,body{
   margin:0;
   padding:0;
@@ -28,6 +33,7 @@ html,body{
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic UI",sans-serif;
 }
+
 body{
   padding:
     max(8px, env(safe-area-inset-top))
@@ -37,6 +43,7 @@ body{
   overscroll-behavior-y:contain;
   touch-action:manipulation;
 }
+
 body.flash-correct{ background:var(--ok); }
 body.flash-wrong{ background:var(--ng); }
 body.flash-timeout{ background:var(--tm); }
@@ -45,6 +52,7 @@ body.flash-timeout{ background:var(--tm); }
   max-width:920px;
   margin:0 auto;
 }
+
 .panel{
   background:var(--panel);
   border:1px solid var(--line);
@@ -53,38 +61,48 @@ body.flash-timeout{ background:var(--tm); }
   padding:10px;
   margin-bottom:8px;
 }
+
 .title{
   font-size:20px;
   font-weight:900;
   line-height:1.2;
 }
+
 .small{
   font-size:12px;
   color:var(--muted);
   line-height:1.5;
 }
+
 .section-title{
   font-size:15px;
   font-weight:900;
   margin-bottom:8px;
 }
+
 .row{
   display:flex;
-  gap:8px;
   flex-wrap:wrap;
+  gap:8px;
   align-items:center;
 }
+
 .grid-2{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
   gap:8px;
 }
+
 .button-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:8px;
 }
-textarea,input[type="number"],select,input[type="text"]{
+
+textarea,
+input[type="number"],
+select,
+input[type="text"]{
   width:100%;
   border:1px solid var(--line);
   border-radius:12px;
@@ -93,14 +111,17 @@ textarea,input[type="number"],select,input[type="text"]{
   color:var(--text);
   font-size:16px;
 }
+
 textarea{
   resize:vertical;
   line-height:1.45;
 }
+
 input[type="file"]{
   width:100%;
   font-size:15px;
 }
+
 button{
   min-height:54px;
   border:1px solid var(--line);
@@ -112,15 +133,18 @@ button{
   padding:10px 12px;
   cursor:pointer;
 }
+
 button:disabled{
   opacity:.45;
   cursor:not-allowed;
 }
+
 .btn-main{
   background:linear-gradient(180deg,#2f76ff,#1d4ed8);
   color:#fff;
   border-color:#1d4ed8;
 }
+
 .btn-ok{ background:#edf9f0; }
 .btn-ng{ background:#fff1f1; }
 .btn-sub{ background:#f8fafc; }
@@ -132,17 +156,20 @@ button:disabled{
   border-radius:999px;
   overflow:hidden;
 }
+
 #progressBar,#focusProgressBar{
   width:0%;
   height:100%;
   background:var(--accent);
   transition:width .18s ease;
 }
+
 .status{
   font-size:16px;
   font-weight:900;
   margin-top:6px;
 }
+
 .timer{
   font-size:16px;
   min-height:22px;
@@ -150,6 +177,7 @@ button:disabled{
   font-weight:900;
   margin-top:2px;
 }
+
 .meta-line{
   display:flex;
   justify-content:space-between;
@@ -158,15 +186,22 @@ button:disabled{
   font-size:13px;
   margin-top:8px;
 }
+
 .word-card{
   margin-top:10px;
-  border:2px solid #dce5f3;
+  border:2px solid #dbe3f1;
   border-radius:18px;
   background:#fff;
-  padding:12px 10px;
+  padding:18px 12px;
   text-align:center;
-  overflow:hidden;
+  min-height:220px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  overflow:visible;
 }
+
 .word-badge{
   display:inline-flex;
   padding:5px 10px;
@@ -178,76 +213,95 @@ button:disabled{
   font-weight:800;
   margin-bottom:10px;
 }
+
 #englishWord{
+  width:100%;
   font-size:30px;
-  line-height:1.25;
+  line-height:1.3;
   font-weight:900;
+  text-align:center;
   word-break:break-word;
   overflow-wrap:anywhere;
+  white-space:normal;
 }
+
 #japaneseWord{
+  width:100%;
   font-size:22px;
   line-height:1.45;
   color:#475467;
-  margin-top:10px;
-  min-height:1.5em;
+  margin-top:12px;
+  min-height:1.6em;
+  text-align:center;
   word-break:break-word;
   overflow-wrap:anywhere;
+  white-space:normal;
 }
+
 .sub-meaning{
   margin-top:8px;
   font-size:12px;
   color:#667085;
 }
+
 .stat-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:8px;
   margin-top:10px;
 }
+
 .stat-box{
   background:#f8fafc;
   border:1px solid var(--line);
   border-radius:14px;
   padding:8px;
 }
+
 .label{
   font-size:11px;
   color:var(--muted);
 }
+
 .value{
   font-size:20px;
   font-weight:900;
   margin-top:4px;
 }
+
 .toggle-line{
   display:flex;
   gap:8px;
   align-items:center;
   margin-top:8px;
 }
+
 input[type="checkbox"]{
   width:18px;
   height:18px;
   flex:0 0 auto;
 }
+
 .mobile-sticky{
   position:sticky;
   bottom:0;
   z-index:30;
-  background:linear-gradient(to top, rgba(238,243,251,1), rgba(238,243,251,.95), rgba(238,243,251,0));
+  background:linear-gradient(to top, rgba(238,243,251,1), rgba(238,243,251,.96), rgba(238,243,251,0));
   padding-top:8px;
 }
+
 .copy-area{
   min-height:150px;
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
+
 .copy-actions{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:8px;
   margin-top:8px;
 }
+
 .help-chip{
   display:inline-flex;
   align-items:center;
@@ -273,8 +327,15 @@ input[type="checkbox"]{
     max(10px, env(safe-area-inset-bottom))
     8px;
 }
-#focusMode.active{ display:flex; }
-.focus-top{ flex:0 0 auto; }
+
+#focusMode.active{
+  display:flex;
+}
+
+.focus-top{
+  flex:0 0 auto;
+}
+
 .focus-meta{
   display:flex;
   justify-content:space-between;
@@ -285,12 +346,14 @@ input[type="checkbox"]{
   color:#475467;
   margin:8px 0;
 }
+
 #focusStatus{
   font-size:16px;
   font-weight:900;
   text-align:center;
   margin-top:6px;
 }
+
 #focusTimer{
   font-size:16px;
   color:#b42318;
@@ -299,6 +362,7 @@ input[type="checkbox"]{
   min-height:22px;
   margin-top:2px;
 }
+
 .focus-card{
   flex:1 1 auto;
   min-height:0;
@@ -306,14 +370,15 @@ input[type="checkbox"]{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  border:2px solid #dce5f3;
+  border:2px solid #dbe3f1;
   border-radius:18px;
   background:#fff;
-  padding:14px 10px;
+  padding:22px 12px;
   position:relative;
   overflow:auto;
   user-select:none;
 }
+
 #focusTapHint{
   position:absolute;
   top:8px;
@@ -330,30 +395,38 @@ input[type="checkbox"]{
   overflow:hidden;
   text-overflow:ellipsis;
 }
+
 .focus-word-en{
-  font-size:36px;
-  line-height:1.2;
+  width:100%;
+  font-size:34px;
+  line-height:1.3;
   font-weight:900;
   text-align:center;
   word-break:break-word;
   overflow-wrap:anywhere;
+  white-space:normal;
 }
+
 .focus-word-ja{
-  font-size:26px;
-  line-height:1.4;
+  width:100%;
+  margin-top:14px;
+  font-size:24px;
+  line-height:1.45;
   color:#475467;
   text-align:center;
-  margin-top:14px;
-  min-height:1.4em;
   word-break:break-word;
   overflow-wrap:anywhere;
+  white-space:normal;
+  min-height:1.4em;
 }
+
 .tap-zone-left,.tap-zone-right{
   position:absolute;
   top:0;
   bottom:0;
   width:50%;
 }
+
 .tap-zone-left{ left:0; }
 .tap-zone-right{ right:0; }
 
@@ -361,12 +434,14 @@ input[type="checkbox"]{
   flex:0 0 auto;
   margin-top:8px;
 }
+
 .focus-stats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:8px;
   margin-bottom:8px;
 }
+
 .focus-stat{
   background:#fff;
   border:1px solid var(--line);
@@ -374,28 +449,34 @@ input[type="checkbox"]{
   padding:8px;
   text-align:center;
 }
+
 .focus-stat .s1{
   font-size:11px;
   color:#667085;
 }
+
 .focus-stat .s2{
   font-size:20px;
   font-weight:900;
   margin-top:4px;
 }
+
 .focus-buttons{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:8px;
 }
+
 .focus-buttons button{
   min-height:68px;
   font-size:20px;
   border-radius:16px;
 }
+
 .focus-buttons .wide{
   grid-column:1 / -1;
 }
+
 .focus-side-hint{
   display:flex;
   justify-content:space-between;
@@ -409,15 +490,22 @@ input[type="checkbox"]{
   .stat-grid{ grid-template-columns:repeat(2,1fr); }
   .focus-stats{ grid-template-columns:repeat(2,1fr); }
 }
+
 @media (max-width:480px){
   .button-grid{ grid-template-columns:1fr 1fr; }
   .copy-actions{ grid-template-columns:1fr; }
   .focus-buttons{ grid-template-columns:1fr; }
   .focus-buttons .wide{ grid-column:auto; }
+
   #englishWord{ font-size:26px; }
   #japaneseWord{ font-size:19px; }
   .focus-word-en{ font-size:30px; }
-  .focus-word-ja{ font-size:22px; }
+  .focus-word-ja{ font-size:21px; }
+
+  .word-card{
+    min-height:200px;
+    padding:16px 10px;
+  }
 }
 </style>
 </head>
@@ -425,8 +513,8 @@ input[type="checkbox"]{
 <div class="container">
 
   <div class="panel">
-    <div class="title">英単語トレーナー mobile easy view</div>
-    <div class="small">単語を見やすく表示。iPhone / Android 対応。間違えたものだけコピー可能。</div>
+    <div class="title">英単語トレーナー restart</div>
+    <div class="small">単語を中央に固定表示。iPhone / Android 向け。間違えた単語だけコピー可能。</div>
   </div>
 
   <div class="panel">
@@ -457,8 +545,8 @@ system,システム</textarea>
     <div class="word-card">
       <div class="word-badge">現在の単語</div>
       <div id="englishWord">---</div>
-      <div id="japaneseWord"></div>
-      <div class="sub-meaning" id="subMeaning">開始するとここに意味が出ます</div>
+      <div id="japaneseWord">---</div>
+      <div class="sub-meaning" id="subMeaning">開始するとここに単語が表示されます</div>
     </div>
 
     <div class="stat-grid">
@@ -487,9 +575,9 @@ system,システム</textarea>
   <div class="panel">
     <div class="section-title">設定</div>
     <div class="grid-2">
-      <div>回答制限(ms)<input type="number" id="answerLimit" value="1200" min="100" step="100"></div>
-      <div>英語速度<input type="number" id="rateEn" value="1.4" step="0.1"></div>
-      <div>日本語速度<input type="number" id="rateJa" value="1.5" step="0.1"></div>
+      <div>回答制限(ms)<input type="number" id="answerLimit" value="1500" min="100" step="100"></div>
+      <div>英語速度<input type="number" id="rateEn" value="1.2" step="0.1"></div>
+      <div>日本語速度<input type="number" id="rateJa" value="1.2" step="0.1"></div>
       <div>英語音声<select id="voiceEn"></select></div>
       <div>日本語音声<select id="voiceJa"></select></div>
       <div>文字サイズ(英語)<input type="number" id="enFontScale" value="85" min="60" max="140" step="5"></div>
@@ -497,8 +585,8 @@ system,システム</textarea>
     </div>
 
     <div class="toggle-line">
-      <input type="checkbox" id="showJapaneseAfterEnglish" checked>
-      <label for="showJapaneseAfterEnglish">英語読上げ後に日本語を表示</label>
+      <input type="checkbox" id="alwaysShowJapanese" checked>
+      <label for="alwaysShowJapanese">最初から日本語も表示する</label>
     </div>
     <div class="toggle-line">
       <input type="checkbox" id="speakJapanese" checked>
@@ -528,10 +616,10 @@ system,システム</textarea>
 
   <div class="panel">
     <div class="row">
-      <span class="help-chip">文字は小さめで固定</span>
-      <span class="help-chip">長い単語も折り返し表示</span>
-      <span class="help-chip">間違いだけそのままコピペ可能</span>
-      <span class="help-chip">GitHub Pagesでも動作</span>
+      <span class="help-chip">単語は常に中央表示</span>
+      <span class="help-chip">文字サイズは font-size だけで変更</span>
+      <span class="help-chip">長い単語も折り返し</span>
+      <span class="help-chip">間違いだけそのままコピー</span>
     </div>
   </div>
 
@@ -570,7 +658,7 @@ system,システム</textarea>
     <div class="tap-zone-left" id="tapLeft"></div>
     <div class="tap-zone-right" id="tapRight"></div>
     <div class="focus-word-en" id="focusEnglish">---</div>
-    <div class="focus-word-ja" id="focusJapanese"></div>
+    <div class="focus-word-ja" id="focusJapanese">---</div>
   </div>
 
   <div class="focus-bottom">
@@ -597,7 +685,7 @@ system,システム</textarea>
 </div>
 
 <script>
-const STORAGE_KEY = "vocab_mobile_easy_view_v2";
+const STORAGE_KEY = "vocab_mobile_restart_v1";
 
 const importArea = document.getElementById("importArea");
 const fileInput = document.getElementById("fileInput");
@@ -621,7 +709,7 @@ const voiceJaSelect = document.getElementById("voiceJa");
 const enFontScale = document.getElementById("enFontScale");
 const jaFontScale = document.getElementById("jaFontScale");
 
-const showJapaneseAfterEnglish = document.getElementById("showJapaneseAfterEnglish");
+const alwaysShowJapanese = document.getElementById("alwaysShowJapanese");
 const speakJapanese = document.getElementById("speakJapanese");
 const enableTap = document.getElementById("enableTap");
 const enableSwipe = document.getElementById("enableSwipe");
@@ -699,24 +787,29 @@ function formatClock(d){
   if(!d) return "--:--:--";
   return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
 }
+
 function formatDateTime(d){
   if(!d) return "未終了";
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
 }
+
 function elapsedSeconds(){
   if(!startTime) return 0;
   const last = endTime || new Date();
   return Math.max(0, Math.floor((last - startTime) / 1000));
 }
+
 function flashScreen(type){
   const cls = `flash-${type}`;
   document.body.classList.add(cls);
   setTimeout(() => document.body.classList.remove(cls), 180);
 }
+
 function vibrate(ms=18){
   if(!enableVibration.checked) return;
   if(navigator.vibrate) navigator.vibrate(ms);
 }
+
 function parseWords(text){
   return text
     .split(/\r?\n/)
@@ -731,6 +824,7 @@ function parseWords(text){
     })
     .filter(v => v.en && v.ja);
 }
+
 function shuffle(arr){
   const a = [...arr];
   for(let i = a.length - 1; i > 0; i--){
@@ -739,14 +833,17 @@ function shuffle(arr){
   }
   return a;
 }
+
 function clearSpeechAndTimers(){
   speechSynthesis.cancel();
   clearInterval(countdownTimer);
 }
+
 function clearAllTimers(){
   clearSpeechAndTimers();
   clearInterval(elapsedTimer);
 }
+
 function populateVoices(){
   voices = speechSynthesis.getVoices();
   voiceEnSelect.innerHTML = "";
@@ -759,6 +856,7 @@ function populateVoices(){
     const i = voices.indexOf(v);
     voiceEnSelect.add(new Option(`${v.name} (${v.lang})`, i));
   });
+
   jaVoices.forEach(v => {
     const i = voices.indexOf(v);
     voiceJaSelect.add(new Option(`${v.name} (${v.lang})`, i));
@@ -767,15 +865,18 @@ function populateVoices(){
   if(enVoices.length === 0) voiceEnSelect.add(new Option("default", ""));
   if(jaVoices.length === 0) voiceJaSelect.add(new Option("default", ""));
 }
+
 function speak(text, lang, rate, voiceIdx, onend){
-  speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang;
   u.rate = Number(rate) || 1.0;
   if(voiceIdx !== "" && voices[voiceIdx]) u.voice = voices[voiceIdx];
-  u.onend = () => { if(typeof onend === "function") onend(); };
+  u.onend = () => {
+    if(typeof onend === "function") onend();
+  };
   speechSynthesis.speak(u);
 }
+
 function unlockIOSAudio(){
   const u = new SpeechSynthesisUtterance(" ");
   u.volume = 0;
@@ -784,30 +885,35 @@ function unlockIOSAudio(){
     speechSynthesis.cancel();
   }catch{}
 }
+
 function applyFontScale(){
   const enScale = Number(enFontScale.value || 85) / 100;
   const jaScale = Number(jaFontScale.value || 85) / 100;
 
   englishWord.style.fontSize = `${30 * enScale}px`;
-  focusEnglish.style.fontSize = `${36 * enScale}px`;
+  focusEnglish.style.fontSize = `${34 * enScale}px`;
   japaneseWord.style.fontSize = `${22 * jaScale}px`;
-  focusJapanese.style.fontSize = `${26 * jaScale}px`;
+  focusJapanese.style.fontSize = `${24 * jaScale}px`;
 }
+
 function updateWordUI(en, ja){
   englishWord.textContent = en || "---";
-  japaneseWord.textContent = ja || "";
+  japaneseWord.textContent = ja || "---";
   focusEnglish.textContent = en || "---";
-  focusJapanese.textContent = ja || "";
-  subMeaning.textContent = ja ? "意味を表示中" : "まだ意味は非表示";
+  focusJapanese.textContent = ja || "---";
+  subMeaning.textContent = "表示中";
 }
+
 function setStatus(text){
   statusEl.textContent = text;
   focusStatus.textContent = text;
 }
+
 function setTimerText(text){
   timerEl.textContent = text;
   focusTimer.textContent = text;
 }
+
 function updateProgress(){
   const ratio = totalInSession ? (questionIndex / totalInSession) * 100 : 0;
   progressBar.style.width = `${ratio}%`;
@@ -817,6 +923,7 @@ function updateProgress(){
   qTotalEl.textContent = totalInSession;
   focusQTotal.textContent = totalInSession;
 }
+
 function updateTimeDisplays(){
   startTimeText.textContent = formatClock(startTime);
   endTimeText.textContent = formatClock(endTime);
@@ -825,16 +932,19 @@ function updateTimeDisplays(){
   elapsedText.textContent = `${elapsedSeconds()}s`;
   focusElapsed.textContent = `${elapsedSeconds()}s`;
 }
+
 function startElapsedTimer(){
   clearInterval(elapsedTimer);
   elapsedTimer = setInterval(updateTimeDisplays, 500);
 }
+
 function getWrongWordsInOriginalOrder(){
   const wrongSet = new Set(results.filter(r => r.result === "×").map(r => `${r.en}\t${r.ja}`));
   return allWords
     .filter(w => wrongSet.has(`${w.en}\t${w.ja}`))
     .map(w => `${w.en},${w.ja}`);
 }
+
 function buildWrongOnlyText(withHeader=false){
   const lines = getWrongWordsInOriginalOrder();
   if(withHeader){
@@ -846,12 +956,14 @@ function buildWrongOnlyText(withHeader=false){
   }
   return lines.join("\n");
 }
+
 function buildSessionSummary(){
   if(!startTime && results.length === 0){
     sessionSummaryArea.value = "";
     wrongOnlyArea.value = "";
     return;
   }
+
   const c = results.filter(r => r.result === "○").length;
   const w = results.filter(r => r.result === "×").length;
   const acc = results.length ? Math.round((c / results.length) * 100) : 0;
@@ -875,6 +987,7 @@ function buildSessionSummary(){
   sessionSummaryArea.value = lines.join("\n");
   wrongOnlyArea.value = buildWrongOnlyText(false);
 }
+
 function updateStats(){
   const c = results.filter(r => r.result === "○").length;
   const w = results.filter(r => r.result === "×").length;
@@ -890,12 +1003,15 @@ function updateStats(){
 
   buildSessionSummary();
 }
+
 async function enterFocusMode(){
   focusMode.classList.add("active");
 }
+
 async function exitFocusMode(){
   focusMode.classList.remove("active");
 }
+
 async function copyText(text){
   let ok = false;
   try{
@@ -909,13 +1025,19 @@ async function copyText(text){
     document.body.appendChild(temp);
     temp.focus();
     temp.select();
-    try{ ok = document.execCommand("copy"); }catch{ ok = false; }
+    try{
+      ok = document.execCommand("copy");
+    }catch{
+      ok = false;
+    }
     document.body.removeChild(temp);
   }
   setStatus(ok ? "コピーしました" : "コピー失敗");
 }
+
 function saveState(){
   if(!persistData.checked) return;
+
   const data = {
     importArea: importArea.value,
     answerLimit: answerLimitInput.value,
@@ -925,7 +1047,7 @@ function saveState(){
     voiceJa: voiceJaSelect.value,
     enFontScale: enFontScale.value,
     jaFontScale: jaFontScale.value,
-    showJapaneseAfterEnglish: showJapaneseAfterEnglish.checked,
+    alwaysShowJapanese: alwaysShowJapanese.checked,
     speakJapanese: speakJapanese.checked,
     enableTap: enableTap.checked,
     enableSwipe: enableSwipe.checked,
@@ -935,18 +1057,20 @@ function saveState(){
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
+
 function restoreState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw) return;
     const d = JSON.parse(raw);
+
     if(typeof d.importArea === "string") importArea.value = d.importArea;
     if(d.answerLimit != null) answerLimitInput.value = d.answerLimit;
     if(d.rateEn != null) rateEnInput.value = d.rateEn;
     if(d.rateJa != null) rateJaInput.value = d.rateJa;
     if(d.enFontScale != null) enFontScale.value = d.enFontScale;
     if(d.jaFontScale != null) jaFontScale.value = d.jaFontScale;
-    if(d.showJapaneseAfterEnglish != null) showJapaneseAfterEnglish.checked = d.showJapaneseAfterEnglish;
+    if(d.alwaysShowJapanese != null) alwaysShowJapanese.checked = d.alwaysShowJapanese;
     if(d.speakJapanese != null) speakJapanese.checked = d.speakJapanese;
     if(d.enableTap != null) enableTap.checked = d.enableTap;
     if(d.enableSwipe != null) enableSwipe.checked = d.enableSwipe;
@@ -955,35 +1079,52 @@ function restoreState(){
     if(d.persistData != null) persistData.checked = d.persistData;
   }catch{}
 }
+
 function loadWords(){
   allWords = parseWords(importArea.value);
   setStatus(allWords.length ? `更新完了: ${allWords.length}件` : "単語がありません");
   saveState();
   buildSessionSummary();
 }
-function revealJapanese(){
+
+function displayCurrentWord(){
   if(!current) return;
-  if(showJapaneseAfterEnglish.checked){
-    japaneseWord.textContent = current.ja;
-    focusJapanese.textContent = current.ja;
-    subMeaning.textContent = "意味を表示中";
+
+  const jaText = alwaysShowJapanese.checked ? current.ja : "---";
+  updateWordUI(current.en, jaText);
+
+  if(alwaysShowJapanese.checked){
+    subMeaning.textContent = "英語と日本語を表示中";
+  }else{
+    subMeaning.textContent = "英語を表示中";
   }
 }
+
+function revealJapaneseIfHidden(){
+  if(!current) return;
+  if(alwaysShowJapanese.checked) return;
+
+  japaneseWord.textContent = current.ja;
+  focusJapanese.textContent = current.ja;
+  subMeaning.textContent = "日本語を表示中";
+}
+
 function readCurrentWordAgain(){
   if(!current || paused || !running) return;
+
+  clearSpeechAndTimers();
   acceptingAnswer = false;
   answeredThisQuestion = false;
-  clearSpeechAndTimers();
+
+  displayCurrentWord();
   setStatus("再読中");
   setTimerText("");
-  japaneseWord.textContent = "";
-  focusJapanese.textContent = "";
-  subMeaning.textContent = "まだ意味は非表示";
 
+  speechSynthesis.cancel();
   speak(current.en, "en-US", rateEnInput.value, voiceEnSelect.value, () => {
     if(paused || !running) return;
 
-    revealJapanese();
+    revealJapaneseIfHidden();
     acceptingAnswer = true;
     setStatus("回答受付中");
     startAnswerTimer();
@@ -993,20 +1134,25 @@ function readCurrentWordAgain(){
     }
   });
 }
+
 function startAnswerTimer(){
-  remainingMs = Number(answerLimitInput.value) || 1200;
+  remainingMs = Number(answerLimitInput.value) || 1500;
   setTimerText(`Time: ${(remainingMs / 1000).toFixed(1)}s`);
+
   clearInterval(countdownTimer);
   countdownTimer = setInterval(() => {
     if(paused) return;
+
     remainingMs -= 100;
     setTimerText(`Time: ${(Math.max(0, remainingMs) / 1000).toFixed(1)}s`);
+
     if(remainingMs <= 0){
       clearInterval(countdownTimer);
       submitAnswer("×", true);
     }
   }, 100);
 }
+
 function nextWord(){
   if(!running || paused) return;
 
@@ -1022,14 +1168,16 @@ function nextWord(){
   current = queue.pop();
   questionIndex++;
   updateProgress();
-  updateWordUI(current.en, "");
+
+  displayCurrentWord();
   setStatus("英語読上げ中");
   setTimerText("");
 
+  speechSynthesis.cancel();
   speak(current.en, "en-US", rateEnInput.value, voiceEnSelect.value, () => {
     if(paused || !running) return;
 
-    revealJapanese();
+    revealJapaneseIfHidden();
     acceptingAnswer = true;
     setStatus("回答受付中");
     startAnswerTimer();
@@ -1039,6 +1187,7 @@ function nextWord(){
     }
   });
 }
+
 async function startSession(wordList){
   unlockIOSAudio();
   allWords = parseWords(importArea.value);
@@ -1069,25 +1218,33 @@ async function startSession(wordList){
   if(autoEnterFullscreen.checked){
     await enterFocusMode();
   }
+
   nextWord();
 }
+
 async function startTest(){
   const words = parseWords(importArea.value);
   await startSession(words);
 }
+
 async function startWrongOnlyTest(){
   const wrongLines = getWrongWordsInOriginalOrder();
   const words = wrongLines.map(line => {
     const parts = line.split(",");
-    return { en: (parts[0] || "").trim(), ja: parts.slice(1).join(",").trim() };
+    return {
+      en:(parts[0] || "").trim(),
+      ja:parts.slice(1).join(",").trim()
+    };
   }).filter(v => v.en && v.ja);
 
   if(!words.length){
     setStatus("間違えた単語がありません");
     return;
   }
+
   await startSession(words);
 }
+
 async function finishSession(){
   running = false;
   paused = false;
@@ -1101,6 +1258,7 @@ async function finishSession(){
   setTimerText("");
   await exitFocusMode();
 }
+
 function pauseOrResume(){
   if(!running) return;
 
@@ -1113,10 +1271,14 @@ function pauseOrResume(){
   }else{
     paused = false;
     setStatus("再開");
-    if(current && questionIndex > 0) readCurrentWordAgain();
-    else nextWord();
+    if(current && questionIndex > 0){
+      readCurrentWordAgain();
+    }else{
+      nextWord();
+    }
   }
 }
+
 function submitAnswer(mark, isTimeout=false){
   if(!current || !running || paused || !acceptingAnswer || answeredThisQuestion) return;
 
@@ -1150,8 +1312,10 @@ function submitAnswer(mark, isTimeout=false){
     if(running && !paused) nextWord();
   }, 220);
 }
+
 async function resetSessionData(){
   await exitFocusMode();
+
   results = [];
   queue = [];
   current = null;
@@ -1163,18 +1327,21 @@ async function resetSessionData(){
   answeredThisQuestion = false;
   startTime = null;
   endTime = null;
+
   clearAllTimers();
-  updateWordUI("---", "");
-  subMeaning.textContent = "開始するとここに意味が出ます";
+  updateWordUI("---", "---");
+  subMeaning.textContent = "開始するとここに単語が表示されます";
   setStatus("待機中");
   setTimerText("");
   updateProgress();
   updateTimeDisplays();
   updateStats();
 }
+
 fileInput.addEventListener("change", (e) => {
   const file = e.target.files?.[0];
   if(!file) return;
+
   const reader = new FileReader();
   reader.onload = () => {
     importArea.value = String(reader.result || "");
@@ -1191,6 +1358,7 @@ copySessionBtn.onclick = () => {
   buildSessionSummary();
   copyText(sessionSummaryArea.value);
 };
+
 copyWrongBtn.onclick = () => copyText(buildWrongOnlyText(false));
 copyWrongHeaderBtn.onclick = () => copyText(buildWrongOnlyText(true));
 
@@ -1213,6 +1381,7 @@ tapLeft.addEventListener("click", () => {
   if(!enableTap.checked) return;
   submitAnswer("×");
 });
+
 tapRight.addEventListener("click", () => {
   if(!enableTap.checked) return;
   submitAnswer("○");
@@ -1225,6 +1394,7 @@ focusCard.addEventListener("touchstart", (e) => {
 
 focusCard.addEventListener("touchend", (e) => {
   if(paused || !running) return;
+
   const dx = e.changedTouches[0].clientX - touchStartX;
   const dy = e.changedTouches[0].clientY - touchStartY;
 
@@ -1277,10 +1447,9 @@ document.addEventListener("keydown", (e) => {
 
 [
   importArea, answerLimitInput, rateEnInput, rateJaInput,
-  enFontScale, jaFontScale,
-  showJapaneseAfterEnglish, speakJapanese,
-  enableTap, enableSwipe, autoEnterFullscreen,
-  enableVibration, persistData
+  enFontScale, jaFontScale, alwaysShowJapanese,
+  speakJapanese, enableTap, enableSwipe,
+  autoEnterFullscreen, enableVibration, persistData
 ].forEach(el => {
   el.addEventListener("input", () => {
     saveState();
