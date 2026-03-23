@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>simple_touch_vocab_auto_japanese.html</title>
+<title>simple_touch_vocab_auto_japanese_copywrong.html</title>
 <style>
 *{
   box-sizing:border-box;
@@ -56,7 +56,7 @@ button{
   background:#fff;
   font-weight:900;
 }
-#startBtn{
+#startBtn,#copyWrongBtn{
   background:#2563eb;
   color:#fff;
   border-color:#2563eb;
@@ -157,7 +157,7 @@ button{
   color:#fff;
   border-color:#2563eb;
 }
-#result{
+#result,#wrongWordsArea{
   margin-top:10px;
   width:100%;
   min-height:120px;
@@ -215,6 +215,13 @@ system,システム</textarea>
       <button id="closeSetupBtn">閉じる</button>
     </div>
 
+    <div class="small">間違った単語</div>
+    <textarea id="wrongWordsArea" readonly></textarea>
+    <div class="row">
+      <button id="copyWrongBtn">間違った単語をコピー</button>
+      <button id="replaceImportWithWrongBtn">間違いだけで置き換え</button>
+    </div>
+
     <div class="small">結果</div>
     <textarea id="result" readonly></textarea>
   </div>
@@ -237,7 +244,7 @@ system,システム</textarea>
 
   <div id="buttons">
     <button id="wrongBtn">わからない</button>
-    <button id="againBtn">さいこう</button>
+    <button id="againBtn">再考</button>
     <button id="correctBtn">わかる</button>
   </div>
 </div>
@@ -262,6 +269,9 @@ const wrongBtn = document.getElementById("wrongBtn");
 const againBtn = document.getElementById("againBtn");
 const correctBtn = document.getElementById("correctBtn");
 const resultEl = document.getElementById("result");
+const wrongWordsArea = document.getElementById("wrongWordsArea");
+const copyWrongBtn = document.getElementById("copyWrongBtn");
+const replaceImportWithWrongBtn = document.getElementById("replaceImportWithWrongBtn");
 const progressTextEl = document.getElementById("progressText");
 const progressBarEl = document.getElementById("progressBar");
 
@@ -277,7 +287,6 @@ let startTime = null;
 let endTime = null;
 let totalCount = 0;
 let currentIndex = 0;
-let revealTimeout = null;
 
 function parseWords(text){
   return text
@@ -345,7 +354,36 @@ function updateProgress(){
 
 function clearAllTimers(){
   clearTimeout(timer);
-  clearTimeout(revealTimeout);
+}
+
+function buildWrongWordsText(){
+  return results
+    .filter(v => v.result === "×")
+    .map(v => `${v.en},${v.ja}`)
+    .join("\n");
+}
+
+function updateWrongWordsArea(){
+  wrongWordsArea.value = buildWrongWordsText();
+}
+
+async function copyText(text){
+  if(!text.trim()){
+    alert("コピーする間違い単語がありません");
+    return;
+  }
+  try{
+    await navigator.clipboard.writeText(text);
+    alert("コピーしました");
+  }catch(e){
+    const temp = document.createElement("textarea");
+    temp.value = text;
+    document.body.appendChild(temp);
+    temp.select();
+    document.execCommand("copy");
+    document.body.removeChild(temp);
+    alert("コピーしました");
+  }
 }
 
 function startAnswerTimer(){
@@ -362,8 +400,6 @@ function readWordSequence(){
   speechSynthesis.cancel();
   showFrontOnly();
 
-  // 最初は日本語を見せない
-  // 英語を読み終わったあとで日本語を表示
   speak(current.en, "en-US", rateEnInput.value, () => {
     showJapanese();
     speak(current.ja, "ja-JP", rateJaInput.value);
@@ -403,6 +439,8 @@ function submit(mark){
     result: mark
   });
 
+  updateWrongWordsArea();
+
   setTimeout(() => {
     nextWord();
   }, 180);
@@ -432,7 +470,7 @@ function finishSession(){
   const correct = results.filter(v => v.result === "○").length;
   const wrong = results.filter(v => v.result === "×").length;
   const acc = results.length ? Math.round(correct / results.length * 100) : 0;
-  const wrongWords = results.filter(v => v.result === "×").map(v => `${v.en},${v.ja}`).join("\n");
+  const wrongWords = buildWrongWordsText();
 
   resultEl.value = [
     "英単語トレーナー 今回結果",
@@ -448,6 +486,7 @@ function finishSession(){
     wrongWords || "(なし)"
   ].join("\n");
 
+  updateWrongWordsArea();
   setup.style.display = "block";
 }
 
@@ -498,6 +537,8 @@ startBtn.addEventListener("click", () => {
   endTime = null;
   totalCount = words.length;
   currentIndex = 0;
+  resultEl.value = "";
+  wrongWordsArea.value = "";
   updateProgress();
   setup.style.display = "none";
   nextWord();
@@ -521,6 +562,19 @@ addJapanese.addEventListener("keydown", (e) => {
   }
 });
 
+copyWrongBtn.addEventListener("click", () => {
+  copyText(buildWrongWordsText());
+});
+
+replaceImportWithWrongBtn.addEventListener("click", () => {
+  const wrongText = buildWrongWordsText();
+  if(!wrongText.trim()){
+    alert("間違った単語がありません");
+    return;
+  }
+  importArea.value = wrongText;
+});
+
 wrongBtn.addEventListener("click", () => submit("×"));
 correctBtn.addEventListener("click", () => submit("○"));
 againBtn.addEventListener("click", handleAgain);
@@ -533,6 +587,7 @@ document.addEventListener("touchstart", (e) => {
 
 showFrontOnly();
 updateProgress();
+updateWrongWordsArea();
 </script>
 </body>
 </html>
