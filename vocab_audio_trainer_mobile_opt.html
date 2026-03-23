@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#2563eb">
+<title>vocab_audio_trainer_mobile_opt.html</title>
+<style>
+:root{
+  --bg:#f4f6fb;
+  --panel:#ffffff;
+  --line:#d8deea;
+  --text:#17202f;
+  --muted:#667085;
+  --accent:#2563eb;
+  --ok:#dff6e4;
+  --ng:#fde4e4;
+  --tm:#fff4d6;
+  --btn:#ffffff;
+  --shadow:0 6px 20px rgba(23,32,47,.08);
+  --radius:18px;
+  --tap-size:78px;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic UI",sans-serif;
+}
+body{
+  padding:
+    max(10px, env(safe-area-inset-top))
+    10px
+    max(10px, env(safe-area-inset-bottom))
+    10px;
+  overscroll-behavior-y:contain;
+  touch-action:manipulation;
+  transition:background-color .15s ease;
+}
+body.flash-correct{ background:var(--ok) !important; }
+body.flash-wrong{ background:var(--ng) !important; }
+body.flash-timeout{ background:var(--tm) !important; }
+
+.container{
+  max-width:980px;
+  margin:0 auto;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:12px;
+  margin-bottom:10px;
+  box-shadow:var(--shadow);
+}
+.title{
+  font-size:24px;
+  font-weight:900;
+  line-height:1.2;
+}
+.small{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.45;
+}
+.row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+textarea,input[type="number"],select,input[type="text"]{
+  width:100%;
+  font-size:16px;
+  padding:12px 12px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+  color:var(--text);
+}
+textarea{ resize:vertical; }
+#importArea{
+  min-height:120px;
+  font-size:14px;
+  line-height:1.35;
+}
+input[type="file"]{
+  width:100%;
+  font-size:15px;
+}
+button{
+  font-size:17px;
+  min-height:56px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--btn);
+  color:var(--text);
+  cursor:pointer;
+  touch-action:manipulation;
+  font-weight:800;
+}
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.button-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:8px;
+}
+.grid-2{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:10px;
+}
+.progress-wrap{
+  width:100%;
+  height:12px;
+  background:#e8edf5;
+  border-radius:999px;
+  overflow:hidden;
+}
+#progressBar,#focusProgressBar{
+  width:0%;
+  height:100%;
+  background:var(--accent);
+  transition:width .18s ease;
+}
+.status{
+  font-weight:900;
+  margin-top:8px;
+  font-size:18px;
+}
+.timer{
+  color:#b42318;
+  font-weight:900;
+  min-height:24px;
+  margin-top:4px;
+  font-size:18px;
+}
+.word-box{
+  margin-top:16px;
+  text-align:center;
+}
+#englishWord{
+  font-size:clamp(34px,6vw,48px);
+  font-weight:900;
+  line-height:1.2;
+  word-break:break-word;
+}
+#japaneseWord{
+  font-size:clamp(24px,4.2vw,32px);
+  color:#475467;
+  margin-top:10px;
+  min-height:40px;
+  line-height:1.35;
+  word-break:break-word;
+}
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:14px;
+}
+.stat-box{
+  background:#f7f9fc;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+}
+.label{
+  font-size:12px;
+  color:var(--muted);
+}
+.value{
+  font-size:24px;
+  font-weight:900;
+  margin-top:4px;
+}
+.toggle-line{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-top:8px;
+}
+input[type="checkbox"]{
+  width:20px;
+  height:20px;
+  flex:0 0 auto;
+}
+body.focus-running .hide-in-focus{
+  display:none !important;
+}
+
+/* mobile sticky bottom controls */
+.mobile-sticky{
+  position:sticky;
+  bottom:0;
+  z-index:20;
+  background:linear-gradient(to top, rgba(244,246,251,1), rgba(244,246,251,.92), rgba(244,246,251,0));
+  padding-top:8px;
+}
+
+/* focus mode */
+#focusMode{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:#f8fafc;
+  display:none;
+  flex-direction:column;
+  padding:
+    max(10px, env(safe-area-inset-top))
+    10px
+    max(10px, env(safe-area-inset-bottom))
+    10px;
+}
+#focusMode.active{ display:flex; }
+
+.focus-top{ flex:0 0 auto; }
+.focus-meta{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:center;
+  font-size:14px;
+  color:#475467;
+  margin:10px 0;
+}
+#focusStatus{
+  font-weight:900;
+  text-align:center;
+  margin-top:8px;
+  font-size:18px;
+}
+#focusTimer{
+  color:#b42318;
+  font-weight:900;
+  min-height:24px;
+  text-align:center;
+  margin-top:4px;
+  font-size:18px;
+}
+
+.focus-card{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  border:2px solid #dbe3f1;
+  border-radius:22px;
+  background:#fff;
+  padding:18px 14px;
+  position:relative;
+  overflow:hidden;
+  user-select:none;
+}
+#focusTapHint{
+  position:absolute;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:12px;
+  color:#667085;
+  background:#f7f8fb;
+  border:1px solid #e4e8f0;
+  border-radius:999px;
+  padding:5px 10px;
+  white-space:nowrap;
+  max-width:92%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.focus-word-en{
+  font-size:clamp(34px,8vw,78px);
+  font-weight:900;
+  line-height:1.15;
+  text-align:center;
+  word-break:break-word;
+}
+.focus-word-ja{
+  margin-top:16px;
+  font-size:clamp(24px,5vw,46px);
+  line-height:1.3;
+  color:#475467;
+  text-align:center;
+  word-break:break-word;
+  min-height:1.4em;
+}
+.tap-zone-left,.tap-zone-right{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:50%;
+}
+.tap-zone-left{ left:0; }
+.tap-zone-right{ right:0; }
+
+.focus-bottom{
+  flex:0 0 auto;
+  margin-top:10px;
+}
+.focus-stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-bottom:10px;
+}
+.focus-stat{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px;
+  text-align:center;
+}
+.focus-stat .s1{
+  font-size:12px;
+  color:#667085;
+}
+.focus-stat .s2{
+  font-size:22px;
+  font-weight:900;
+  margin-top:4px;
+}
+.focus-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.focus-buttons button{
+  min-height:82px;
+  font-size:24px;
+  font-weight:900;
+  border-radius:18px;
+}
+.focus-buttons .wide{
+  grid-column:1 / -1;
+}
+.btn-ok{ background:#eefbf0; }
+.btn-ng{ background:#fff1f1; }
+.btn-rep{ background:#eef4ff; }
+.btn-sub{ background:#f8fafc; }
+
+.focus-side-hint{
+  display:flex;
+  justify-content:space-between;
+  margin-top:8px;
+  font-size:12px;
+  color:#667085;
+  padding:0 4px;
+}
+
+.help-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#f8fafc;
+  font-size:12px;
+  color:#475467;
+}
+
+@media (max-width:760px){
+  .container{ max-width:none; }
+  .panel{ padding:10px; }
+  .title{ font-size:22px; }
+  .stat-grid{ grid-template-columns:repeat(2,1fr); }
+  .focus-stats{ grid-template-columns:repeat(2,1fr); }
+  .focus-buttons{
+    grid-template-columns:1fr;
+  }
+  .focus-buttons button,
+  .focus-buttons .wide{
+    grid-column:auto;
+  }
+  .button-grid{
+    grid-template-columns:1fr 1fr;
+  }
+  button{
+    min-height:60px;
+    font-size:18px;
+  }
+  #englishWord{ font-size:clamp(30px,8vw,42px); }
+  #japaneseWord{ font-size:clamp(22px,5vw,28px); }
+}
+
+@media (max-width:420px){
+  body{
+    padding:
+      max(8px, env(safe-area-inset-top))
+      8px
+      max(8px, env(safe-area-inset-bottom))
+      8px;
+  }
+  .button-grid{
+    grid-template-columns:1fr;
+  }
+  .grid-2{
+    grid-template-columns:1fr;
+  }
+  .focus-word-en{ font-size:clamp(30px,9vw,52px); }
+  .focus-word-ja{ font-size:clamp(22px,6vw,34px); }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="panel hide-in-focus">
+    <div class="title">英単語トレーナー mobile</div>
+    <div class="small">iPhone / Android 最適化版。開始後は疑似全画面、左右タップ・スワイプ対応。iPhoneでは最初の開始ボタンが音声許可の起点になります。</div>
+  </div>
+
+  <div class="panel hide-in-focus">
+    <div style="font-weight:900; margin-bottom:8px;">単語リスト</div>
+    <textarea id="importArea">apple,りんご
+engineer,技術者
+design,設計
+analysis,分析
+system,システム</textarea>
+    <div class="row" style="margin-top:8px;">
+      <input type="file" id="fileInput" accept=".csv,.txt,text/plain">
+      <button id="loadBtn">更新</button>
+      <button id="copySessionBtn" disabled>結果コピー</button>
+    </div>
+    <div class="small" style="margin-top:6px;">1行に1語。english,japanese または english[TAB]japanese</div>
+  </div>
+
+  <div class="panel hide-in-focus">
+    <div class="progress-wrap"><div id="progressBar"></div></div>
+    <div class="row" style="justify-content:space-between; margin-top:8px;">
+      <div># <span id="qNum">0</span> / <span id="qTotal">0</span></div>
+      <div>開始 <span id="startTimeText">--:--:--</span></div>
+      <div>終了 <span id="endTimeText">--:--:--</span></div>
+    </div>
+    <div id="status" class="status">待機中</div>
+    <div id="timer" class="timer"></div>
+
+    <div class="word-box">
+      <div id="englishWord">---</div>
+      <div id="japaneseWord"></div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-box"><div class="label">○</div><div class="value" id="correctCount">0</div></div>
+      <div class="stat-box"><div class="label">×</div><div class="value" id="wrongCount">0</div></div>
+      <div class="stat-box"><div class="label">正答率</div><div class="value" id="accuracy">0%</div></div>
+      <div class="stat-box"><div class="label">経過</div><div class="value" id="elapsedText">0s</div></div>
+    </div>
+  </div>
+
+  <div class="mobile-sticky hide-in-focus">
+    <div class="panel">
+      <div class="button-grid">
+        <button id="startBtn">開始</button>
+        <button id="correctBtn">○ わかる</button>
+        <button id="wrongBtn">× わからない</button>
+        <button id="repeatBtn">再読</button>
+        <button id="pauseBtn">停止 / 再開</button>
+        <button id="resetBtn">リセット</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel hide-in-focus">
+    <div style="font-weight:900; margin-bottom:8px;">設定</div>
+    <div class="grid-2">
+      <div>回答制限(ms)<input type="number" id="answerLimit" value="1200" min="100" step="100"></div>
+      <div>英語速度<input type="number" id="rateEn" value="1.4" step="0.1"></div>
+      <div>日本語速度<input type="number" id="rateJa" value="1.5" step="0.1"></div>
+      <div>英語音声<select id="voiceEn"></select></div>
+      <div>日本語音声<select id="voiceJa"></select></div>
+      <div>文字サイズ(英語)<input type="number" id="enFontScale" value="100" min="70" max="180" step="5"></div>
+      <div>文字サイズ(日本語)<input type="number" id="jaFontScale" value="100" min="70" max="180" step="5"></div>
+    </div>
+    <div class="toggle-line">
+      <input type="checkbox" id="enableTap" checked>
+      <label for="enableTap">全画面で左右タップ判定</label>
+    </div>
+    <div class="toggle-line">
+      <input type="checkbox" id="enableSwipe" checked>
+      <label for="enableSwipe">全画面で左右スワイプ判定</label>
+    </div>
+    <div class="toggle-line">
+      <input type="checkbox" id="autoEnterFullscreen" checked>
+      <label for="autoEnterFullscreen">開始時に疑似全画面へ自動移行</label>
+    </div>
+    <div class="toggle-line">
+      <input type="checkbox" id="enableVibration" checked>
+      <label for="enableVibration">判定時に軽く振動（対応端末のみ）</label>
+    </div>
+    <div class="toggle-line">
+      <input type="checkbox" id="keepScreenAwake" checked>
+      <label for="keepScreenAwake">学習中は画面スリープを抑える</label>
+    </div>
+  </div>
+
+  <div class="panel hide-in-focus">
+    <div class="row">
+      <span class="help-chip">iPhone: 最初の「開始」で音声許可を安定化</span>
+      <span class="help-chip">Android: スワイプ・振動が使いやすい</span>
+      <span class="help-chip">GitHub Pagesでも動作</span>
+    </div>
+  </div>
+
+  <div class="panel hide-in-focus">
+    <div style="font-weight:900; margin-bottom:8px;">今回結果</div>
+    <textarea id="sessionSummaryArea" readonly style="height:220px;"></textarea>
+  </div>
+
+</div>
+
+<div id="focusMode" aria-hidden="true">
+  <div class="focus-top">
+    <div class="progress-wrap"><div id="focusProgressBar"></div></div>
+    <div class="focus-meta">
+      <div># <span id="focusQNum">0</span> / <span id="focusQTotal">0</span></div>
+      <div>開始 <span id="focusStartTime">--:--:--</span></div>
+      <div>終了 <span id="focusEndTime">--:--:--</span></div>
+    </div>
+    <div id="focusStatus">待機中</div>
+    <div id="focusTimer"></div>
+  </div>
+
+  <div class="focus-card" id="focusCard">
+    <div id="focusTapHint">左タップ × / 右タップ ○ / 上スワイプ再読 / Escで戻る</div>
+    <div class="tap-zone-left" id="tapLeft"></div>
+    <div class="tap-zone-right" id="tapRight"></div>
+    <div class="focus-word-en" id="focusEnglish">---</div>
+    <div class="focus-word-ja" id="focusJapanese"></div>
+  </div>
+
+  <div class="focus-bottom">
+    <div class="focus-stats">
+      <div class="focus-stat"><div class="s1">○</div><div class="s2" id="focusCorrectCount">0</div></div>
+      <div class="focus-stat"><div class="s1">×</div><div class="s2" id="focusWrongCount">0</div></div>
+      <div class="focus-stat"><div class="s1">正答率</div><div class="s2" id="focusAccuracy">0%</div></div>
+      <div class="focus-stat"><div class="s1">経過</div><div class="s2" id="focusElapsed">0s</div></div>
+    </div>
+
+    <div class="focus-buttons">
+      <button id="focusCorrectBtn" class="btn-ok">○ わかる</button>
+      <button id="focusWrongBtn" class="btn-ng">× わからない</button>
+      <button id="focusRepeatBtn" class="btn-rep wide">再読</button>
+      <button id="focusPauseBtn" class="btn-sub">停止 / 再開</button>
+      <button id="focusCloseBtn" class="btn-sub">通常表示へ戻る</button>
+    </div>
+
+    <div class="focus-side-hint">
+      <span>左半分 = ×</span>
+      <span>右半分 = ○</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const importArea = document.getElementById("importArea");
+const fileInput = document.getElementById("fileInput");
+const loadBtn = document.getElementById("loadBtn");
+const copySessionBtn = document.getElementById("copySessionBtn");
+const startBtn = document.getElementById("startBtn");
+const correctBtn = document.getElementById("correctBtn");
+const wrongBtn = document.getElementById("wrongBtn");
+const repeatBtn = document.getElementById("repeatBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const answerLimitInput = document.getElementById("answerLimit");
+const rateEnInput = document.getElementById("rateEn");
+const rateJaInput = document.getElementById("rateJa");
+const voiceEnSelect = document.getElementById("voiceEn");
+const voiceJaSelect = document.getElementById("voiceJa");
+const enFontScale = document.getElementById("enFontScale");
+const jaFontScale = document.getElementById("jaFontScale");
+const enableTap = document.getElementById("enableTap");
+const enableSwipe = document.getElementById("enableSwipe");
+const autoEnterFullscreen = document.getElementById("autoEnterFullscreen");
+const enableVibration = document.getElementById("enableVibration");
+const keepScreenAwake = document.getElementById("keepScreenAwake");
+
+const progressBar = document.getElementById("progressBar");
+const qNumEl = document.getElementById("qNum");
+const qTotalEl = document.getElementById("qTotal");
+const startTimeText = document.getElementById("startTimeText");
+const endTimeText = document.getElementById("endTimeText");
+const statusEl = document.getElementById("status");
+const timerEl = document.getElementById("timer");
+const englishWord = document.getElementById("englishWord");
+const japaneseWord = document.getElementById("japaneseWord");
+const correctCountEl = document.getElementById("correctCount");
+const wrongCountEl = document.getElementById("wrongCount");
+const accuracyEl = document.getElementById("accuracy");
+const elapsedText = document.getElementById("elapsedText");
+const sessionSummaryArea = document.getElementById("sessionSummaryArea");
+
+const focusMode = document.getElementById("focusMode");
+const focusProgressBar = document.getElementById("focusProgressBar");
+const focusQNum = document.getElementById("focusQNum");
+const focusQTotal = document.getElementById("focusQTotal");
+const focusStartTime = document.getElementById("focusStartTime");
+const focusEndTime = document.getElementById("focusEndTime");
+const focusStatus = document.getElementById("focusStatus");
+const focusTimer = document.getElementById("focusTimer");
+const focusEnglish = document.getElementById("focusEnglish");
+const focusJapanese = document.getElementById("focusJapanese");
+const focusCorrectCount = document.getElementById("focusCorrectCount");
+const focusWrongCount = document.getElementById("focusWrongCount");
+const focusAccuracy = document.getElementById("focusAccuracy");
+const focusElapsed = document.getElementById("focusElapsed");
+const focusCard = document.getElementById("focusCard");
+const tapLeft = document.getElementById("tapLeft");
+const tapRight = document.getElementById("tapRight");
+const focusCorrectBtn = document.getElementById("focusCorrectBtn");
+const focusWrongBtn = document.getElementById("focusWrongBtn");
+const focusRepeatBtn = document.getElementById("focusRepeatBtn");
+const focusPauseBtn = document.getElementById("focusPauseBtn");
+const focusCloseBtn = document.getElementById("focusCloseBtn");
+
+let allWords = [];
+let queue = [];
+let current = null;
+let results = [];
+let questionIndex = 0;
+let totalInSession = 0;
+
+let running = false;
+let paused = false;
+let acceptingAnswer = false;
+let answeredThisQuestion = false;
+let countdownTimer = null;
+let elapsedTimer = null;
+let remainingMs = 0;
+
+let voices = [];
+let touchStartX = 0;
+let touchStartY = 0;
+let wakeLock = null;
+
+let startTime = null;
+let endTime = null;
+
+function formatClock(d){
+  if(!d) return "--:--:--";
+  return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
+}
+function formatDateTime(d){
+  if(!d) return "未終了";
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
+}
+function elapsedSeconds(){
+  if(!startTime) return 0;
+  const last = endTime || new Date();
+  return Math.max(0, Math.floor((last - startTime) / 1000));
+}
+function flashScreen(type){
+  const cls = `flash-${type}`;
+  document.body.classList.add(cls);
+  setTimeout(() => document.body.classList.remove(cls), 180);
+}
+function vibrate(ms=18){
+  if(!enableVibration.checked) return;
+  if(navigator.vibrate) navigator.vibrate(ms);
+}
+function parseWords(text){
+  return text
+    .split(/\r?\n/)
+    .map(v => v.trim())
+    .filter(v => v)
+    .map(line => {
+      const parts = line.includes("\t") ? line.split("\t") : line.split(",");
+      return { en:(parts[0] || "").trim(), ja:parts.slice(1).join(",").trim() };
+    })
+    .filter(v => v.en && v.ja);
+}
+function shuffle(arr){
+  const a = [...arr];
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function clearSpeechAndTimers(){
+  speechSynthesis.cancel();
+  clearInterval(countdownTimer);
+}
+function clearAllTimers(){
+  clearSpeechAndTimers();
+  clearInterval(elapsedTimer);
+}
+function populateVoices(){
+  voices = speechSynthesis.getVoices();
+  voiceEnSelect.innerHTML = "";
+  voiceJaSelect.innerHTML = "";
+
+  const enVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+  const jaVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("ja"));
+
+  enVoices.forEach((v) => {
+    const i = voices.indexOf(v);
+    voiceEnSelect.add(new Option(`${v.name} (${v.lang})`, i));
+  });
+  jaVoices.forEach((v) => {
+    const i = voices.indexOf(v);
+    voiceJaSelect.add(new Option(`${v.name} (${v.lang})`, i));
+  });
+
+  if(enVoices.length === 0) voiceEnSelect.add(new Option("default", ""));
+  if(jaVoices.length === 0) voiceJaSelect.add(new Option("default", ""));
+}
+function speak(text, lang, rate, voiceIdx, onend){
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  u.rate = Number(rate) || 1.0;
+  if(voiceIdx !== "" && voices[voiceIdx]) u.voice = voices[voiceIdx];
+  u.onend = () => { if(typeof onend === "function") onend(); };
+  speechSynthesis.speak(u);
+}
+function unlockIOSAudio(){
+  const u = new SpeechSynthesisUtterance(" ");
+  u.volume = 0;
+  try{
+    speechSynthesis.speak(u);
+    speechSynthesis.cancel();
+  }catch{}
+}
+function applyFontScale(){
+  const enScale = Number(enFontScale.value || 100) / 100;
+  const jaScale = Number(jaFontScale.value || 100) / 100;
+  englishWord.style.transform = `scale(${enScale})`;
+  focusEnglish.style.transform = `scale(${enScale})`;
+  japaneseWord.style.transform = `scale(${jaScale})`;
+  focusJapanese.style.transform = `scale(${jaScale})`;
+}
+function updateWordUI(en, ja){
+  englishWord.textContent = en || "---";
+  japaneseWord.textContent = ja || "";
+  focusEnglish.textContent = en || "---";
+  focusJapanese.textContent = ja || "";
+}
+function setStatus(text){
+  statusEl.textContent = text;
+  focusStatus.textContent = text;
+}
+function setTimerText(text){
+  timerEl.textContent = text;
+  focusTimer.textContent = text;
+}
+function updateProgress(){
+  const ratio = totalInSession ? (questionIndex / totalInSession) * 100 : 0;
+  progressBar.style.width = `${ratio}%`;
+  focusProgressBar.style.width = `${ratio}%`;
+  qNumEl.textContent = questionIndex;
+  focusQNum.textContent = questionIndex;
+  qTotalEl.textContent = totalInSession;
+  focusQTotal.textContent = totalInSession;
+}
+function updateTimeDisplays(){
+  startTimeText.textContent = formatClock(startTime);
+  endTimeText.textContent = formatClock(endTime);
+  focusStartTime.textContent = formatClock(startTime);
+  focusEndTime.textContent = formatClock(endTime);
+  elapsedText.textContent = `${elapsedSeconds()}s`;
+  focusElapsed.textContent = `${elapsedSeconds()}s`;
+}
+function startElapsedTimer(){
+  clearInterval(elapsedTimer);
+  elapsedTimer = setInterval(updateTimeDisplays, 500);
+}
+function getWrongWordsInOriginalOrder(){
+  const wrongSet = new Set(results.filter(r => r.result === "×").map(r => `${r.en}\t${r.ja}`));
+  return allWords
+    .filter(w => wrongSet.has(`${w.en}\t${w.ja}`))
+    .map(w => `${w.en},${w.ja}`);
+}
+function buildSessionSummary(){
+  if(!startTime && results.length === 0){
+    sessionSummaryArea.value = "";
+    return;
+  }
+  const c = results.filter(r => r.result === "○").length;
+  const w = results.filter(r => r.result === "×").length;
+  const acc = results.length ? Math.round((c / results.length) * 100) : 0;
+  const wrongLines = getWrongWordsInOriginalOrder();
+
+  const lines = [];
+  lines.push("英単語トレーナー 今回結果");
+  lines.push(`開始: ${startTime ? formatDateTime(startTime) : "-"}`);
+  lines.push(`終了: ${endTime ? formatDateTime(endTime) : "未終了"}`);
+  lines.push(`問題数: ${totalInSession}`);
+  lines.push(`回答数: ${results.length}`);
+  lines.push(`正解: ${c}`);
+  lines.push(`不正解: ${w}`);
+  lines.push(`正答率: ${acc}%`);
+  lines.push(`経過秒: ${elapsedSeconds()}s`);
+  lines.push("");
+  lines.push("ミス単語");
+  if(wrongLines.length) lines.push(...wrongLines);
+  else lines.push("(なし)");
+  sessionSummaryArea.value = lines.join("\n");
+}
+function updateStats(){
+  const c = results.filter(r => r.result === "○").length;
+  const w = results.filter(r => r.result === "×").length;
+  const acc = results.length ? Math.round((c / results.length) * 100) : 0;
+
+  correctCountEl.textContent = c;
+  wrongCountEl.textContent = w;
+  accuracyEl.textContent = `${acc}%`;
+
+  focusCorrectCount.textContent = c;
+  focusWrongCount.textContent = w;
+  focusAccuracy.textContent = `${acc}%`;
+
+  buildSessionSummary();
+}
+async function requestWakeLock(){
+  if(!keepScreenAwake.checked) return;
+  try{
+    if("wakeLock" in navigator){
+      wakeLock = await navigator.wakeLock.request("screen");
+    }
+  }catch{}
+}
+async function releaseWakeLock(){
+  try{
+    if(wakeLock){
+      await wakeLock.release();
+      wakeLock = null;
+    }
+  }catch{}
+}
+async function enterFocusMode(){
+  focusMode.classList.add("active");
+  document.body.classList.add("focus-running");
+  await requestWakeLock();
+}
+async function exitFocusMode(){
+  focusMode.classList.remove("active");
+  document.body.classList.remove("focus-running");
+  await releaseWakeLock();
+}
+function setCopyButtonState(){
+  copySessionBtn.disabled = results.length === 0 && !startTime;
+}
+async function copyTextFallback(text){
+  const temp = document.createElement("textarea");
+  temp.value = text;
+  temp.style.position = "fixed";
+  temp.style.left = "-9999px";
+  document.body.appendChild(temp);
+  temp.focus();
+  temp.select();
+  let ok = false;
+  try{ ok = document.execCommand("copy"); }catch{ ok = false; }
+  document.body.removeChild(temp);
+  return ok;
+}
+async function copySessionSummary(){
+  buildSessionSummary();
+  const text = sessionSummaryArea.value;
+  let ok = false;
+  try{
+    await navigator.clipboard.writeText(text);
+    ok = true;
+  }catch{
+    ok = await copyTextFallback(text);
+  }
+  setStatus(ok ? "今回結果をコピーしました" : "コピー失敗");
+}
+async function resetSessionData(){
+  await exitFocusMode();
+  results = [];
+  queue = [];
+  current = null;
+  questionIndex = 0;
+  totalInSession = 0;
+  running = false;
+  paused = false;
+  acceptingAnswer = false;
+  answeredThisQuestion = false;
+  startTime = null;
+  endTime = null;
+  clearAllTimers();
+  updateWordUI("---", "");
+  setStatus("待機中");
+  setTimerText("");
+  updateProgress();
+  updateTimeDisplays();
+  updateStats();
+  setCopyButtonState();
+}
+function loadWords(){
+  allWords = parseWords(importArea.value);
+  setStatus(allWords.length ? `更新完了: ${allWords.length}件` : "単語がありません");
+  buildSessionSummary();
+}
+function readCurrentWordAgain(){
+  if(!current || paused || !running) return;
+  acceptingAnswer = false;
+  answeredThisQuestion = false;
+  clearSpeechAndTimers();
+  setStatus("再読中");
+  setTimerText("");
+  japaneseWord.textContent = "";
+  focusJapanese.textContent = "";
+  speak(current.en, "en-US", rateEnInput.value, voiceEnSelect.value, () => {
+    if(paused || !running) return;
+    japaneseWord.textContent = current.ja;
+    focusJapanese.textContent = current.ja;
+    acceptingAnswer = true;
+    setStatus("回答受付中");
+    startAnswerTimer();
+    speak(current.ja, "ja-JP", rateJaInput.value, voiceJaSelect.value);
+  });
+}
+function startAnswerTimer(){
+  remainingMs = Number(answerLimitInput.value) || 1200;
+  setTimerText(`Time: ${(remainingMs / 1000).toFixed(1)}s`);
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(() => {
+    if(paused) return;
+    remainingMs -= 100;
+    setTimerText(`Time: ${(Math.max(0, remainingMs) / 1000).toFixed(1)}s`);
+    if(remainingMs <= 0){
+      clearInterval(countdownTimer);
+      submitAnswer("×", true);
+    }
+  }, 100);
+}
+function nextWord(){
+  if(!running || paused) return;
+
+  clearSpeechAndTimers();
+  acceptingAnswer = false;
+  answeredThisQuestion = false;
+
+  if(queue.length === 0){
+    finishSession();
+    return;
+  }
+
+  current = queue.pop();
+  questionIndex++;
+  updateProgress();
+  updateWordUI(current.en, "");
+  setStatus("英語読上げ中");
+  setTimerText("");
+
+  speak(current.en, "en-US", rateEnInput.value, voiceEnSelect.value, () => {
+    if(paused || !running) return;
+    japaneseWord.textContent = current.ja;
+    focusJapanese.textContent = current.ja;
+    acceptingAnswer = true;
+    setStatus("回答受付中");
+    startAnswerTimer();
+    speak(current.ja, "ja-JP", rateJaInput.value, voiceJaSelect.value);
+  });
+}
+async function startTest(){
+  unlockIOSAudio();
+  allWords = parseWords(importArea.value);
+  if(!allWords.length){
+    setStatus("単語がありません");
+    return;
+  }
+
+  results = [];
+  queue = shuffle(allWords);
+  current = null;
+  questionIndex = 0;
+  totalInSession = queue.length;
+  running = true;
+  paused = false;
+  acceptingAnswer = false;
+  answeredThisQuestion = false;
+  startTime = new Date();
+  endTime = null;
+
+  updateStats();
+  updateProgress();
+  updateTimeDisplays();
+  startElapsedTimer();
+  setCopyButtonState();
+
+  if(autoEnterFullscreen.checked){
+    await enterFocusMode();
+  }
+  nextWord();
+}
+async function finishSession(){
+  running = false;
+  paused = false;
+  acceptingAnswer = false;
+  answeredThisQuestion = true;
+  clearSpeechAndTimers();
+  endTime = new Date();
+  updateTimeDisplays();
+  updateStats();
+  setStatus("終了");
+  setTimerText("");
+  setCopyButtonState();
+  await exitFocusMode();
+}
+function pauseOrResume(){
+  if(!running) return;
+
+  if(!paused){
+    paused = true;
+    acceptingAnswer = false;
+    clearSpeechAndTimers();
+    setStatus("停止中");
+    setTimerText("停止中");
+  }else{
+    paused = false;
+    setStatus("再開");
+    if(current && questionIndex > 0) readCurrentWordAgain();
+    else nextWord();
+  }
+}
+function submitAnswer(mark, isTimeout = false){
+  if(!current || !running || paused || !acceptingAnswer || answeredThisQuestion) return;
+
+  answeredThisQuestion = true;
+  acceptingAnswer = false;
+  clearInterval(countdownTimer);
+
+  results.push({
+    en: current.en,
+    ja: current.ja,
+    result: mark
+  });
+
+  if(isTimeout){
+    flashScreen("timeout");
+    vibrate(35);
+    setStatus("時間切れ");
+  }else if(mark === "○"){
+    flashScreen("correct");
+    vibrate(16);
+    setStatus("正解");
+  }else{
+    flashScreen("wrong");
+    vibrate(28);
+    setStatus("不正解");
+  }
+
+  updateStats();
+  setCopyButtonState();
+
+  setTimeout(() => {
+    if(running && !paused) nextWord();
+  }, 220);
+}
+
+fileInput.addEventListener("change", (e) => {
+  const file = e.target.files?.[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    importArea.value = String(reader.result || "");
+    loadWords();
+  };
+  reader.readAsText(file, "UTF-8");
+});
+
+loadBtn.onclick = loadWords;
+copySessionBtn.onclick = copySessionSummary;
+startBtn.onclick = startTest;
+correctBtn.onclick = () => submitAnswer("○");
+wrongBtn.onclick = () => submitAnswer("×");
+repeatBtn.onclick = readCurrentWordAgain;
+pauseBtn.onclick = pauseOrResume;
+resetBtn.onclick = resetSessionData;
+
+focusCorrectBtn.onclick = () => submitAnswer("○");
+focusWrongBtn.onclick = () => submitAnswer("×");
+focusRepeatBtn.onclick = readCurrentWordAgain;
+focusPauseBtn.onclick = pauseOrResume;
+focusCloseBtn.onclick = exitFocusMode;
+
+tapLeft.addEventListener("click", () => {
+  if(!enableTap.checked) return;
+  submitAnswer("×");
+});
+tapRight.addEventListener("click", () => {
+  if(!enableTap.checked) return;
+  submitAnswer("○");
+});
+
+focusCard.addEventListener("touchstart", (e) => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive:true });
+
+focusCard.addEventListener("touchend", (e) => {
+  if(paused || !running) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+
+  if(enableSwipe.checked){
+    if(Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 60){
+      submitAnswer(dx > 0 ? "○" : "×");
+      return;
+    }
+    if(Math.abs(dy) > Math.abs(dx) && dy < -60){
+      readCurrentWordAgain();
+      return;
+    }
+  }
+}, { passive:true });
+
+document.addEventListener("keydown", (e) => {
+  const k = e.key.toLowerCase();
+
+  if(k === "a"){
+    e.preventDefault();
+    startTest();
+    return;
+  }
+  if(k === " "){
+    e.preventDefault();
+    pauseOrResume();
+    return;
+  }
+  if(k === "c"){
+    e.preventDefault();
+    readCurrentWordAgain();
+    return;
+  }
+  if(k === "z"){
+    e.preventDefault();
+    submitAnswer("○");
+    return;
+  }
+  if(k === "x"){
+    e.preventDefault();
+    submitAnswer("×");
+    return;
+  }
+  if(e.key === "Escape"){
+    e.preventDefault();
+    exitFocusMode();
+    return;
+  }
+});
+
+document.addEventListener("visibilitychange", async () => {
+  if(document.visibilityState === "visible" && running && !paused){
+    await requestWakeLock();
+  }
+});
+
+speechSynthesis.onvoiceschanged = populateVoices;
+populateVoices();
+applyFontScale();
+
+enFontScale.addEventListener("input", applyFontScale);
+jaFontScale.addEventListener("input", applyFontScale);
+
+resetSessionData();
+loadWords();
+</script>
+</body>
+</html>
