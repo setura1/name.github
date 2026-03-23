@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>touch_only_vocab.html</title>
 <meta name="theme-color" content="#2563eb">
+<title>touch_vocab_copy_paste_ready.html</title>
 <style>
 :root{
   --bg:#eef3fb;
@@ -13,6 +13,7 @@
   --text:#17212f;
   --muted:#667085;
   --accent:#2563eb;
+  --accent2:#1d4ed8;
   --ok:#ecfdf3;
   --ng:#fff1f2;
   --tm:#fff7e8;
@@ -233,7 +234,13 @@ body.flash-timeout{ background:var(--tm); }
   color:var(--muted);
   line-height:1.5;
 }
-textarea,input[type="number"],select,input[type="file"]{
+.section-title{
+  font-size:15px;
+  font-weight:900;
+  margin-top:12px;
+  margin-bottom:8px;
+}
+textarea,input[type="number"],select,input[type="file"],input[type="text"]{
   width:100%;
   border:1px solid var(--line);
   border-radius:12px;
@@ -254,6 +261,12 @@ textarea{
   gap:8px;
   margin-top:8px;
 }
+.row-3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:8px;
+}
 button{
   min-height:54px;
   border:1px solid var(--line);
@@ -269,7 +282,7 @@ button{
   color:#fff;
   border-color:#1d4ed8;
 }
-#resultArea{
+#resultArea,#wrongArea{
   margin-top:10px;
   min-height:120px;
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
@@ -278,7 +291,7 @@ button{
   #englishWord{ font-size:28px; }
   #japaneseWord{ font-size:20px; }
   .bottom{ grid-template-columns:repeat(2,1fr); }
-  .row{ grid-template-columns:1fr; }
+  .row,.row-3{ grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -286,8 +299,9 @@ button{
 <div id="setup">
   <div class="setup-panel">
     <div class="setup-title">タッチ専用 英単語カード</div>
-    <div class="small">開始後は基本タッチだけで操作します。左タップ = ×、右タップ = ○、中央タップ = 次へ、上スワイプ = 再読、長押し = 停止/再開</div>
+    <div class="small">開始後は基本タッチだけで操作します。左タップ = ×、右タップ = ○、中央タップ = 次へ、上スワイプ = 再読、長押し = 停止/再開、2本指タップ = 設定を開く</div>
 
+    <div class="section-title">単語リスト</div>
     <textarea id="importArea">apple,りんご
 engineer,技術者
 design,設計
@@ -296,6 +310,17 @@ system,システム</textarea>
 
     <input type="file" id="fileInput" accept=".csv,.txt,text/plain">
 
+    <div class="section-title">単語を追加</div>
+    <div class="row">
+      <input type="text" id="addEn" placeholder="English">
+      <input type="text" id="addJa" placeholder="日本語">
+    </div>
+    <div class="row">
+      <button id="addWordBtn" class="btn-main">単語を追加</button>
+      <button id="clearAddBtn">入力欄クリア</button>
+    </div>
+
+    <div class="section-title">設定</div>
     <div class="row">
       <div>
         <div class="small">回答制限(ms)</div>
@@ -328,12 +353,23 @@ system,システム</textarea>
 
     <div class="row">
       <button id="startBtn" class="btn-main">開始</button>
-      <button id="copyWrongBtn">間違いだけコピー</button>
-      <button id="copyResultBtn">結果コピー</button>
       <button id="closeSetupBtn">設定を閉じる</button>
     </div>
 
+    <div class="section-title">間違えた単語だけ</div>
+    <textarea id="wrongArea" readonly></textarea>
+    <div class="row-3">
+      <button id="copyWrongBtn">間違いだけコピー</button>
+      <button id="replaceImportWithWrongBtn">間違いで置き換え</button>
+      <button id="appendWrongToImportBtn">間違いを追記</button>
+    </div>
+
+    <div class="section-title">今回結果</div>
     <textarea id="resultArea" readonly></textarea>
+    <div class="row">
+      <button id="copyResultBtn">結果コピー</button>
+      <button id="copyWrongHeaderBtn">見出し付きでコピー</button>
+    </div>
   </div>
 </div>
 
@@ -360,7 +396,7 @@ system,システム</textarea>
       <div class="badge">現在の単語</div>
       <div id="englishWord">---</div>
       <div id="japaneseWord">---</div>
-      <div id="hint">右上あたりを2本指タップすると設定画面を開けます</div>
+      <div id="hint">2本指タップで設定画面を開けます</div>
     </div>
   </div>
 
@@ -373,7 +409,7 @@ system,システム</textarea>
 </div>
 
 <script>
-const STORAGE_KEY = "touch_only_vocab_v1";
+const STORAGE_KEY = "touch_only_vocab_v2";
 
 const setup = document.getElementById("setup");
 const importArea = document.getElementById("importArea");
@@ -385,10 +421,20 @@ const speakJapaneseSelect = document.getElementById("speakJapanese");
 const voiceEnSelect = document.getElementById("voiceEn");
 const voiceJaSelect = document.getElementById("voiceJa");
 const startBtn = document.getElementById("startBtn");
+const closeSetupBtn = document.getElementById("closeSetupBtn");
+
+const addEn = document.getElementById("addEn");
+const addJa = document.getElementById("addJa");
+const addWordBtn = document.getElementById("addWordBtn");
+const clearAddBtn = document.getElementById("clearAddBtn");
+
+const wrongArea = document.getElementById("wrongArea");
+const resultArea = document.getElementById("resultArea");
 const copyWrongBtn = document.getElementById("copyWrongBtn");
 const copyResultBtn = document.getElementById("copyResultBtn");
-const closeSetupBtn = document.getElementById("closeSetupBtn");
-const resultArea = document.getElementById("resultArea");
+const copyWrongHeaderBtn = document.getElementById("copyWrongHeaderBtn");
+const replaceImportWithWrongBtn = document.getElementById("replaceImportWithWrongBtn");
+const appendWrongToImportBtn = document.getElementById("appendWrongToImportBtn");
 
 const progressBar = document.getElementById("progressBar");
 const qNumEl = document.getElementById("qNum");
@@ -442,6 +488,13 @@ function parseWords(text){
       return { en:(parts[0] || "").trim(), ja:parts.slice(1).join(",").trim() };
     })
     .filter(v => v.en && v.ja);
+}
+
+function normalizeWordLine(en, ja){
+  const enText = String(en || "").trim();
+  const jaText = String(ja || "").trim();
+  if(!enText || !jaText) return "";
+  return `${enText},${jaText}`;
 }
 
 function shuffle(arr){
@@ -569,6 +622,7 @@ function updateStats(){
   correctCountEl.textContent = c;
   wrongCountEl.textContent = w;
   accuracyEl.textContent = `${acc}%`;
+  wrongArea.value = buildWrongText(false);
   resultArea.value = buildResultText();
 }
 
@@ -608,12 +662,26 @@ function buildResultText(){
 }
 
 async function copyText(text){
+  let ok = false;
   try{
     await navigator.clipboard.writeText(text);
-    setStatus("コピーしました");
+    ok = true;
   }catch{
-    setStatus("コピー失敗");
+    const temp = document.createElement("textarea");
+    temp.value = text;
+    temp.style.position = "fixed";
+    temp.style.left = "-9999px";
+    document.body.appendChild(temp);
+    temp.focus();
+    temp.select();
+    try{
+      ok = document.execCommand("copy");
+    }catch{
+      ok = false;
+    }
+    document.body.removeChild(temp);
   }
+  setStatus(ok ? "コピーしました" : "コピー失敗");
 }
 
 function clearSpeechAndTimers(){
@@ -788,14 +856,70 @@ function handleCenterTap(){
   if(answeredThisQuestion) nextWord();
 }
 
+function addSingleWord(){
+  const line = normalizeWordLine(addEn.value, addJa.value);
+  if(!line){
+    setStatus("英語と日本語を入れてください");
+    return;
+  }
+  const base = importArea.value.trim();
+  importArea.value = base ? `${base}\n${line}` : line;
+  addEn.value = "";
+  addJa.value = "";
+  saveState();
+  setStatus("単語を追加しました");
+}
+
+function replaceImportWithWrongWords(){
+  const text = buildWrongText(false).trim();
+  if(!text){
+    setStatus("間違えた単語がありません");
+    return;
+  }
+  importArea.value = text;
+  saveState();
+  setStatus("間違えた単語で置き換えました");
+}
+
+function appendWrongWordsToImport(){
+  const text = buildWrongText(false).trim();
+  if(!text){
+    setStatus("間違えた単語がありません");
+    return;
+  }
+  const base = importArea.value.trim();
+  importArea.value = base ? `${base}\n${text}` : text;
+  saveState();
+  setStatus("間違えた単語を追記しました");
+}
+
 startBtn.addEventListener("click", async () => {
   saveState();
   await startSession();
 });
 
+closeSetupBtn.addEventListener("click", () => {
+  setup.style.display = "none";
+});
+
+addWordBtn.addEventListener("click", addSingleWord);
+clearAddBtn.addEventListener("click", () => {
+  addEn.value = "";
+  addJa.value = "";
+  setStatus("入力欄をクリアしました");
+});
+addJa.addEventListener("keydown", (e) => {
+  if(e.key === "Enter"){
+    e.preventDefault();
+    addSingleWord();
+  }
+});
+
 copyWrongBtn.addEventListener("click", () => copyText(buildWrongText(false)));
 copyResultBtn.addEventListener("click", () => copyText(buildResultText()));
-closeSetupBtn.addEventListener("click", () => { setup.style.display = "none"; });
+copyWrongHeaderBtn.addEventListener("click", () => copyText(buildWrongText(true)));
+replaceImportWithWrongBtn.addEventListener("click", replaceImportWithWrongWords);
+appendWrongToImportBtn.addEventListener("click", appendWrongWordsToImport);
 
 fileInput.addEventListener("change", (e) => {
   const file = e.target.files?.[0];
@@ -804,6 +928,7 @@ fileInput.addEventListener("change", (e) => {
   reader.onload = () => {
     importArea.value = String(reader.result || "");
     saveState();
+    setStatus("ファイルを読み込みました");
   };
   reader.readAsText(file, "UTF-8");
 });
@@ -866,6 +991,7 @@ updateWord("---","---");
 updateStats();
 updateProgress();
 updateTime();
+wrongArea.value = "";
 resultArea.value = "";
 </script>
 </body>
