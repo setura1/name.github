@@ -2,9 +2,9 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="theme-color" content="#2563eb">
-<title>vocab_audio_trainer_mobile_plus.html</title>
+<title>vocab_mobile_easy_view.html</title>
 <style>
 :root{
   --bg:#eef3fb;
@@ -13,38 +13,36 @@
   --text:#17212f;
   --muted:#667085;
   --accent:#2563eb;
-  --accent-2:#1d4ed8;
-  --ok:#e9f9ee;
-  --ng:#fff0f0;
-  --tm:#fff7df;
+  --accent-dark:#1d4ed8;
+  --ok:#ecfdf3;
+  --ng:#fff1f2;
+  --tm:#fff7e6;
   --shadow:0 10px 28px rgba(23,33,47,.08);
-  --radius:20px;
+  --radius:18px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{
   margin:0;
   padding:0;
-  min-height:100%;
   background:var(--bg);
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic UI",sans-serif;
 }
 body{
   padding:
-    max(10px, env(safe-area-inset-top))
-    10px
-    max(12px, env(safe-area-inset-bottom))
-    10px;
+    max(8px, env(safe-area-inset-top))
+    8px
+    max(10px, env(safe-area-inset-bottom))
+    8px;
   overscroll-behavior-y:contain;
   touch-action:manipulation;
-  transition:background-color .15s ease;
 }
-body.flash-correct{ background:var(--ok) !important; }
-body.flash-wrong{ background:var(--ng) !important; }
-body.flash-timeout{ background:var(--tm) !important; }
+body.flash-correct{ background:var(--ok); }
+body.flash-wrong{ background:var(--ng); }
+body.flash-timeout{ background:var(--tm); }
 
 .container{
-  max-width:980px;
+  max-width:920px;
   margin:0 auto;
 }
 .panel{
@@ -52,11 +50,11 @@ body.flash-timeout{ background:var(--tm) !important; }
   border:1px solid var(--line);
   border-radius:var(--radius);
   box-shadow:var(--shadow);
-  padding:12px;
-  margin-bottom:10px;
+  padding:10px;
+  margin-bottom:8px;
 }
 .title{
-  font-size:24px;
+  font-size:20px;
   font-weight:900;
   line-height:1.2;
 }
@@ -66,7 +64,7 @@ body.flash-timeout{ background:var(--tm) !important; }
   line-height:1.5;
 }
 .section-title{
-  font-size:16px;
+  font-size:15px;
   font-weight:900;
   margin-bottom:8px;
 }
@@ -78,39 +76,41 @@ body.flash-timeout{ background:var(--tm) !important; }
 }
 .grid-2{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:10px;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:8px;
 }
 .button-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  grid-template-columns:repeat(2,1fr);
   gap:8px;
 }
 textarea,input[type="number"],select,input[type="text"]{
   width:100%;
   border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px 12px;
+  border-radius:12px;
+  padding:10px;
   background:#fff;
   color:var(--text);
   font-size:16px;
 }
-textarea{ resize:vertical; }
+textarea{
+  resize:vertical;
+  line-height:1.45;
+}
 input[type="file"]{
   width:100%;
   font-size:15px;
 }
 button{
-  min-height:58px;
+  min-height:54px;
   border:1px solid var(--line);
-  border-radius:15px;
+  border-radius:14px;
   background:#fff;
   color:var(--text);
-  font-size:17px;
+  font-size:16px;
   font-weight:900;
-  padding:12px 14px;
+  padding:10px 12px;
   cursor:pointer;
-  touch-action:manipulation;
 }
 button:disabled{
   opacity:.45;
@@ -127,7 +127,7 @@ button:disabled{
 
 .progress-wrap{
   width:100%;
-  height:13px;
+  height:12px;
   background:#e8edf6;
   border-radius:999px;
   overflow:hidden;
@@ -139,83 +139,84 @@ button:disabled{
   transition:width .18s ease;
 }
 .status{
-  font-size:18px;
+  font-size:16px;
   font-weight:900;
-  margin-top:8px;
+  margin-top:6px;
 }
 .timer{
-  font-size:18px;
-  min-height:24px;
+  font-size:16px;
+  min-height:22px;
   color:#b42318;
   font-weight:900;
-  margin-top:4px;
+  margin-top:2px;
 }
 .meta-line{
   display:flex;
   justify-content:space-between;
   gap:8px;
   flex-wrap:wrap;
-  font-size:14px;
+  font-size:13px;
   margin-top:8px;
 }
 .word-card{
-  margin-top:14px;
+  margin-top:10px;
   border:2px solid #dce5f3;
-  border-radius:22px;
-  background:
-    radial-gradient(circle at top right, rgba(37,99,235,.07), transparent 32%),
-    #fff;
-  padding:18px 14px;
+  border-radius:18px;
+  background:#fff;
+  padding:12px 10px;
   text-align:center;
+  overflow:hidden;
 }
 .word-badge{
   display:inline-flex;
-  padding:6px 12px;
+  padding:5px 10px;
   border-radius:999px;
   border:1px solid #d7e1f1;
   background:#f8fbff;
   color:#475467;
-  font-size:12px;
+  font-size:11px;
   font-weight:800;
-  margin-bottom:12px;
+  margin-bottom:10px;
 }
 #englishWord{
-  font-size:clamp(34px,7vw,54px);
-  line-height:1.18;
+  font-size:30px;
+  line-height:1.25;
   font-weight:900;
   word-break:break-word;
+  overflow-wrap:anywhere;
 }
 #japaneseWord{
-  font-size:clamp(24px,4.8vw,34px);
-  line-height:1.35;
+  font-size:22px;
+  line-height:1.45;
   color:#475467;
-  margin-top:14px;
+  margin-top:10px;
   min-height:1.5em;
   word-break:break-word;
+  overflow-wrap:anywhere;
 }
 .sub-meaning{
-  margin-top:10px;
-  font-size:13px;
+  margin-top:8px;
+  font-size:12px;
   color:#667085;
 }
 .stat-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:8px;
-  margin-top:14px;
+  margin-top:10px;
 }
 .stat-box{
   background:#f8fafc;
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:10px;
+  border-radius:14px;
+  padding:8px;
 }
 .label{
-  font-size:12px;
+  font-size:11px;
   color:var(--muted);
 }
 .value{
-  font-size:24px;
+  font-size:20px;
   font-weight:900;
   margin-top:4px;
 }
@@ -226,11 +227,10 @@ button:disabled{
   margin-top:8px;
 }
 input[type="checkbox"]{
-  width:20px;
-  height:20px;
+  width:18px;
+  height:18px;
   flex:0 0 auto;
 }
-
 .mobile-sticky{
   position:sticky;
   bottom:0;
@@ -238,31 +238,26 @@ input[type="checkbox"]{
   background:linear-gradient(to top, rgba(238,243,251,1), rgba(238,243,251,.95), rgba(238,243,251,0));
   padding-top:8px;
 }
-.hide-in-focus{ display:block; }
-body.focus-running .hide-in-focus{ display:none !important; }
-
+.copy-area{
+  min-height:150px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+.copy-actions{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:8px;
+}
 .help-chip{
   display:inline-flex;
   align-items:center;
   gap:6px;
-  padding:8px 10px;
+  padding:7px 10px;
   border-radius:999px;
   border:1px solid var(--line);
   background:#f8fafc;
-  font-size:12px;
+  font-size:11px;
   color:#475467;
-}
-
-.copy-area{
-  min-height:180px;
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  line-height:1.45;
-}
-.copy-actions{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:8px;
-  margin-top:8px;
 }
 
 #focusMode{
@@ -273,36 +268,36 @@ body.focus-running .hide-in-focus{ display:none !important; }
   display:none;
   flex-direction:column;
   padding:
-    max(10px, env(safe-area-inset-top))
-    10px
-    max(12px, env(safe-area-inset-bottom))
-    10px;
+    max(8px, env(safe-area-inset-top))
+    8px
+    max(10px, env(safe-area-inset-bottom))
+    8px;
 }
 #focusMode.active{ display:flex; }
-
 .focus-top{ flex:0 0 auto; }
 .focus-meta{
   display:flex;
   justify-content:space-between;
   gap:8px;
+  flex-wrap:wrap;
   align-items:center;
-  font-size:14px;
+  font-size:13px;
   color:#475467;
-  margin:10px 0;
+  margin:8px 0;
 }
 #focusStatus{
-  font-size:18px;
+  font-size:16px;
   font-weight:900;
   text-align:center;
-  margin-top:8px;
+  margin-top:6px;
 }
 #focusTimer{
-  font-size:18px;
+  font-size:16px;
   color:#b42318;
   font-weight:900;
   text-align:center;
-  min-height:24px;
-  margin-top:4px;
+  min-height:22px;
+  margin-top:2px;
 }
 .focus-card{
   flex:1 1 auto;
@@ -312,44 +307,46 @@ body.focus-running .hide-in-focus{ display:none !important; }
   justify-content:center;
   align-items:center;
   border:2px solid #dce5f3;
-  border-radius:24px;
+  border-radius:18px;
   background:#fff;
-  padding:20px 14px;
+  padding:14px 10px;
   position:relative;
-  overflow:hidden;
+  overflow:auto;
   user-select:none;
 }
 #focusTapHint{
   position:absolute;
-  top:10px;
+  top:8px;
   left:50%;
   transform:translateX(-50%);
-  font-size:12px;
+  font-size:11px;
   color:#667085;
   background:#f8fafc;
   border:1px solid #e2e8f2;
   border-radius:999px;
-  padding:5px 10px;
+  padding:4px 10px;
   white-space:nowrap;
   max-width:92%;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 .focus-word-en{
-  font-size:clamp(36px,8vw,80px);
-  line-height:1.14;
+  font-size:36px;
+  line-height:1.2;
   font-weight:900;
   text-align:center;
   word-break:break-word;
+  overflow-wrap:anywhere;
 }
 .focus-word-ja{
-  font-size:clamp(24px,5vw,46px);
-  line-height:1.3;
+  font-size:26px;
+  line-height:1.4;
   color:#475467;
   text-align:center;
-  margin-top:18px;
+  margin-top:14px;
   min-height:1.4em;
   word-break:break-word;
+  overflow-wrap:anywhere;
 }
 .tap-zone-left,.tap-zone-right{
   position:absolute;
@@ -362,39 +359,39 @@ body.focus-running .hide-in-focus{ display:none !important; }
 
 .focus-bottom{
   flex:0 0 auto;
-  margin-top:10px;
+  margin-top:8px;
 }
 .focus-stats{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:8px;
-  margin-bottom:10px;
+  margin-bottom:8px;
 }
 .focus-stat{
   background:#fff;
   border:1px solid var(--line);
   border-radius:14px;
-  padding:10px;
+  padding:8px;
   text-align:center;
 }
 .focus-stat .s1{
-  font-size:12px;
+  font-size:11px;
   color:#667085;
 }
 .focus-stat .s2{
-  font-size:22px;
+  font-size:20px;
   font-weight:900;
   margin-top:4px;
 }
 .focus-buttons{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
 }
 .focus-buttons button{
-  min-height:82px;
-  font-size:24px;
-  border-radius:18px;
+  min-height:68px;
+  font-size:20px;
+  border-radius:16px;
 }
 .focus-buttons .wide{
   grid-column:1 / -1;
@@ -402,47 +399,37 @@ body.focus-running .hide-in-focus{ display:none !important; }
 .focus-side-hint{
   display:flex;
   justify-content:space-between;
-  margin-top:8px;
-  font-size:12px;
+  margin-top:6px;
+  font-size:11px;
   color:#667085;
   padding:0 4px;
 }
 
 @media (max-width:760px){
-  .panel{ padding:10px; }
-  .title{ font-size:22px; }
   .stat-grid{ grid-template-columns:repeat(2,1fr); }
   .focus-stats{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:480px){
+  .button-grid{ grid-template-columns:1fr 1fr; }
+  .copy-actions{ grid-template-columns:1fr; }
   .focus-buttons{ grid-template-columns:1fr; }
   .focus-buttons .wide{ grid-column:auto; }
-  .button-grid{ grid-template-columns:1fr 1fr; }
-}
-@media (max-width:420px){
-  body{
-    padding:
-      max(8px, env(safe-area-inset-top))
-      8px
-      max(10px, env(safe-area-inset-bottom))
-      8px;
-  }
-  .button-grid{ grid-template-columns:1fr; }
-  .grid-2{ grid-template-columns:1fr; }
-  .focus-word-en{ font-size:clamp(32px,9vw,56px); }
-  .focus-word-ja{ font-size:clamp(22px,6vw,34px); }
+  #englishWord{ font-size:26px; }
+  #japaneseWord{ font-size:19px; }
+  .focus-word-en{ font-size:30px; }
+  .focus-word-ja{ font-size:22px; }
 }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <div class="panel hide-in-focus">
-    <div class="title">英単語トレーナー mobile+</div>
-    <div class="small">
-      iPhone / Android 向け。単語を大きく表示、左右タップ・スワイプ対応、×だけ再テスト、間違えた単語だけコピペ対応。
-    </div>
+  <div class="panel">
+    <div class="title">英単語トレーナー mobile easy view</div>
+    <div class="small">単語を見やすく表示。iPhone / Android 対応。間違えたものだけコピー可能。</div>
   </div>
 
-  <div class="panel hide-in-focus">
+  <div class="panel">
     <div class="section-title">単語リスト</div>
     <textarea id="importArea">apple,りんご
 engineer,技術者
@@ -457,7 +444,7 @@ system,システム</textarea>
     <div class="small" style="margin-top:6px;">1行に1語。english,japanese または english[TAB]japanese</div>
   </div>
 
-  <div class="panel hide-in-focus">
+  <div class="panel">
     <div class="progress-wrap"><div id="progressBar"></div></div>
     <div class="meta-line">
       <div># <span id="qNum">0</span> / <span id="qTotal">0</span></div>
@@ -482,7 +469,7 @@ system,システム</textarea>
     </div>
   </div>
 
-  <div class="mobile-sticky hide-in-focus">
+  <div class="mobile-sticky">
     <div class="panel">
       <div class="button-grid">
         <button id="startBtn" class="btn-main">開始</button>
@@ -497,7 +484,7 @@ system,システム</textarea>
     </div>
   </div>
 
-  <div class="panel hide-in-focus">
+  <div class="panel">
     <div class="section-title">設定</div>
     <div class="grid-2">
       <div>回答制限(ms)<input type="number" id="answerLimit" value="1200" min="100" step="100"></div>
@@ -505,8 +492,8 @@ system,システム</textarea>
       <div>日本語速度<input type="number" id="rateJa" value="1.5" step="0.1"></div>
       <div>英語音声<select id="voiceEn"></select></div>
       <div>日本語音声<select id="voiceJa"></select></div>
-      <div>文字サイズ(英語)<input type="number" id="enFontScale" value="100" min="70" max="180" step="5"></div>
-      <div>文字サイズ(日本語)<input type="number" id="jaFontScale" value="100" min="70" max="180" step="5"></div>
+      <div>文字サイズ(英語)<input type="number" id="enFontScale" value="85" min="60" max="140" step="5"></div>
+      <div>文字サイズ(日本語)<input type="number" id="jaFontScale" value="85" min="60" max="140" step="5"></div>
     </div>
 
     <div class="toggle-line">
@@ -527,15 +514,11 @@ system,システム</textarea>
     </div>
     <div class="toggle-line">
       <input type="checkbox" id="autoEnterFullscreen" checked>
-      <label for="autoEnterFullscreen">開始時に疑似全画面へ自動移行</label>
+      <label for="autoEnterFullscreen">開始時に全画面へ移行</label>
     </div>
     <div class="toggle-line">
       <input type="checkbox" id="enableVibration" checked>
       <label for="enableVibration">判定時に軽く振動</label>
-    </div>
-    <div class="toggle-line">
-      <input type="checkbox" id="keepScreenAwake" checked>
-      <label for="keepScreenAwake">学習中は画面スリープを抑える</label>
     </div>
     <div class="toggle-line">
       <input type="checkbox" id="persistData" checked>
@@ -543,29 +526,29 @@ system,システム</textarea>
     </div>
   </div>
 
-  <div class="panel hide-in-focus">
+  <div class="panel">
     <div class="row">
-      <span class="help-chip">iPhone: 最初の開始で音声許可が安定</span>
-      <span class="help-chip">Android: 振動とスワイプが使いやすい</span>
+      <span class="help-chip">文字は小さめで固定</span>
+      <span class="help-chip">長い単語も折り返し表示</span>
+      <span class="help-chip">間違いだけそのままコピペ可能</span>
       <span class="help-chip">GitHub Pagesでも動作</span>
-      <span class="help-chip">単語リストは自動保存</span>
     </div>
   </div>
 
-  <div class="panel hide-in-focus">
+  <div class="panel">
     <div class="section-title">今回結果</div>
     <textarea id="sessionSummaryArea" class="copy-area" readonly></textarea>
     <div class="copy-actions">
       <button id="copySessionBtn">結果コピー</button>
       <button id="copyWrongBtn">間違いだけコピー</button>
-      <button id="copyWrongHeaderBtn">間違いだけ見出し付きコピー</button>
+      <button id="copyWrongHeaderBtn">見出し付きでコピー</button>
     </div>
   </div>
 
-  <div class="panel hide-in-focus">
+  <div class="panel">
     <div class="section-title">間違えた単語だけ</div>
     <textarea id="wrongOnlyArea" class="copy-area" readonly></textarea>
-    <div class="small">そのままコピペしやすい english,japanese 形式</div>
+    <div class="small">english,japanese 形式でそのままコピペできます</div>
   </div>
 
 </div>
@@ -583,7 +566,7 @@ system,システム</textarea>
   </div>
 
   <div class="focus-card" id="focusCard">
-    <div id="focusTapHint">左タップ × / 右タップ ○ / 上スワイプ再読 / Escで戻る</div>
+    <div id="focusTapHint">左タップ × / 右タップ ○ / 上スワイプ再読</div>
     <div class="tap-zone-left" id="tapLeft"></div>
     <div class="tap-zone-right" id="tapRight"></div>
     <div class="focus-word-en" id="focusEnglish">---</div>
@@ -614,7 +597,7 @@ system,システム</textarea>
 </div>
 
 <script>
-const STORAGE_KEY = "vocab_audio_trainer_mobile_plus_v1";
+const STORAGE_KEY = "vocab_mobile_easy_view_v2";
 
 const importArea = document.getElementById("importArea");
 const fileInput = document.getElementById("fileInput");
@@ -644,7 +627,6 @@ const enableTap = document.getElementById("enableTap");
 const enableSwipe = document.getElementById("enableSwipe");
 const autoEnterFullscreen = document.getElementById("autoEnterFullscreen");
 const enableVibration = document.getElementById("enableVibration");
-const keepScreenAwake = document.getElementById("keepScreenAwake");
 const persistData = document.getElementById("persistData");
 
 const progressBar = document.getElementById("progressBar");
@@ -709,7 +691,6 @@ let remainingMs = 0;
 let voices = [];
 let touchStartX = 0;
 let touchStartY = 0;
-let wakeLock = null;
 
 let startTime = null;
 let endTime = null;
@@ -804,12 +785,13 @@ function unlockIOSAudio(){
   }catch{}
 }
 function applyFontScale(){
-  const enScale = Number(enFontScale.value || 100) / 100;
-  const jaScale = Number(jaFontScale.value || 100) / 100;
-  englishWord.style.transform = `scale(${enScale})`;
-  focusEnglish.style.transform = `scale(${enScale})`;
-  japaneseWord.style.transform = `scale(${jaScale})`;
-  focusJapanese.style.transform = `scale(${jaScale})`;
+  const enScale = Number(enFontScale.value || 85) / 100;
+  const jaScale = Number(jaFontScale.value || 85) / 100;
+
+  englishWord.style.fontSize = `${30 * enScale}px`;
+  focusEnglish.style.fontSize = `${36 * enScale}px`;
+  japaneseWord.style.fontSize = `${22 * jaScale}px`;
+  focusJapanese.style.fontSize = `${26 * jaScale}px`;
 }
 function updateWordUI(en, ja){
   englishWord.textContent = en || "---";
@@ -908,31 +890,11 @@ function updateStats(){
 
   buildSessionSummary();
 }
-async function requestWakeLock(){
-  if(!keepScreenAwake.checked) return;
-  try{
-    if("wakeLock" in navigator){
-      wakeLock = await navigator.wakeLock.request("screen");
-    }
-  }catch{}
-}
-async function releaseWakeLock(){
-  try{
-    if(wakeLock){
-      await wakeLock.release();
-      wakeLock = null;
-    }
-  }catch{}
-}
 async function enterFocusMode(){
   focusMode.classList.add("active");
-  document.body.classList.add("focus-running");
-  await requestWakeLock();
 }
 async function exitFocusMode(){
   focusMode.classList.remove("active");
-  document.body.classList.remove("focus-running");
-  await releaseWakeLock();
 }
 async function copyText(text){
   let ok = false;
@@ -969,7 +931,6 @@ function saveState(){
     enableSwipe: enableSwipe.checked,
     autoEnterFullscreen: autoEnterFullscreen.checked,
     enableVibration: enableVibration.checked,
-    keepScreenAwake: keepScreenAwake.checked,
     persistData: persistData.checked
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -991,7 +952,6 @@ function restoreState(){
     if(d.enableSwipe != null) enableSwipe.checked = d.enableSwipe;
     if(d.autoEnterFullscreen != null) autoEnterFullscreen.checked = d.autoEnterFullscreen;
     if(d.enableVibration != null) enableVibration.checked = d.enableVibration;
-    if(d.keepScreenAwake != null) keepScreenAwake.checked = d.keepScreenAwake;
     if(d.persistData != null) persistData.checked = d.persistData;
   }catch{}
 }
@@ -1315,21 +1275,21 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-document.addEventListener("visibilitychange", async () => {
-  if(document.visibilityState === "visible" && running && !paused){
-    await requestWakeLock();
-  }
-});
-
 [
   importArea, answerLimitInput, rateEnInput, rateJaInput,
   enFontScale, jaFontScale,
   showJapaneseAfterEnglish, speakJapanese,
   enableTap, enableSwipe, autoEnterFullscreen,
-  enableVibration, keepScreenAwake, persistData
+  enableVibration, persistData
 ].forEach(el => {
-  el.addEventListener("input", saveState);
-  el.addEventListener("change", saveState);
+  el.addEventListener("input", () => {
+    saveState();
+    applyFontScale();
+  });
+  el.addEventListener("change", () => {
+    saveState();
+    applyFontScale();
+  });
 });
 
 speechSynthesis.onvoiceschanged = () => {
@@ -1347,9 +1307,6 @@ speechSynthesis.onvoiceschanged = () => {
 restoreState();
 populateVoices();
 applyFontScale();
-enFontScale.addEventListener("input", applyFontScale);
-jaFontScale.addEventListener("input", applyFontScale);
-
 resetSessionData();
 loadWords();
 </script>
