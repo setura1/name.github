@@ -83,6 +83,33 @@ button{
     max(12px, env(safe-area-inset-bottom))
     10px;
 }
+#topInfo{
+  flex:0 0 auto;
+  background:#fff;
+  border:1px solid #d7deea;
+  border-radius:16px;
+  padding:10px;
+  margin-bottom:10px;
+}
+#progressText{
+  font-size:16px;
+  font-weight:900;
+  text-align:center;
+}
+#progressBarWrap{
+  margin-top:8px;
+  width:100%;
+  height:10px;
+  background:#e6edf8;
+  border-radius:999px;
+  overflow:hidden;
+}
+#progressBar{
+  width:0%;
+  height:100%;
+  background:#2563eb;
+  transition:width .2s ease;
+}
 #card{
   flex:1 1 auto;
   background:#fff;
@@ -94,10 +121,21 @@ button{
   text-align:center;
   padding:20px;
 }
-#word{
+#wordWrap{
+  width:100%;
+}
+#englishWord{
   font-size:34px;
   line-height:1.35;
   font-weight:900;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+#japaneseWord{
+  margin-top:14px;
+  font-size:24px;
+  line-height:1.45;
+  color:#475467;
   word-break:break-word;
   overflow-wrap:anywhere;
 }
@@ -124,10 +162,16 @@ button{
   min-height:120px;
 }
 @media (max-width:480px){
-  #word{
+  #englishWord{
     font-size:28px;
   }
+  #japaneseWord{
+    font-size:20px;
+  }
   #buttons{
+    grid-template-columns:1fr;
+  }
+  .row{
     grid-template-columns:1fr;
   }
 }
@@ -145,6 +189,16 @@ engineer,技術者
 design,設計
 analysis,分析
 system,システム</textarea>
+
+    <div class="small">単語追加</div>
+    <div class="row">
+      <input type="text" id="addEnglish" placeholder="英語">
+      <input type="text" id="addJapanese" placeholder="日本語">
+    </div>
+    <div class="row">
+      <button id="addWordBtn">単語を追加</button>
+      <button id="clearAddBtn">入力を消す</button>
+    </div>
 
     <div class="small">回答制限(ms)</div>
     <input type="number" id="answerLimit" value="1500" min="100" step="100">
@@ -172,8 +226,18 @@ system,システム</textarea>
 </div>
 
 <div id="app">
+  <div id="topInfo">
+    <div id="progressText">0 / 0</div>
+    <div id="progressBarWrap">
+      <div id="progressBar"></div>
+    </div>
+  </div>
+
   <div id="card">
-    <div id="word">---</div>
+    <div id="wordWrap">
+      <div id="englishWord">---</div>
+      <div id="japaneseWord">---</div>
+    </div>
   </div>
 
   <div id="buttons">
@@ -193,23 +257,32 @@ const startBtn = document.getElementById("startBtn");
 const closeSetupBtn = document.getElementById("closeSetupBtn");
 const setup = document.getElementById("setup");
 
-const wordEl = document.getElementById("word");
+const addEnglish = document.getElementById("addEnglish");
+const addJapanese = document.getElementById("addJapanese");
+const addWordBtn = document.getElementById("addWordBtn");
+const clearAddBtn = document.getElementById("clearAddBtn");
+
+const englishWordEl = document.getElementById("englishWord");
+const japaneseWordEl = document.getElementById("japaneseWord");
 const wrongBtn = document.getElementById("wrongBtn");
 const againBtn = document.getElementById("againBtn");
 const correctBtn = document.getElementById("correctBtn");
 const resultEl = document.getElementById("result");
+const progressTextEl = document.getElementById("progressText");
+const progressBarEl = document.getElementById("progressBar");
 
 let words = [];
 let queue = [];
 let current = null;
 let results = [];
-let voices = [];
 let timer = null;
 let running = false;
 let accepting = false;
 let answered = false;
 let startTime = null;
 let endTime = null;
+let totalCount = 0;
+let currentIndex = 0;
 
 function parseWords(text){
   return text
@@ -253,10 +326,18 @@ function unlockAudio(){
 
 function showWord(){
   if(!current){
-    wordEl.textContent = "---";
+    englishWordEl.textContent = "---";
+    japaneseWordEl.textContent = "---";
     return;
   }
-  wordEl.textContent = current.en;
+  englishWordEl.textContent = current.en;
+  japaneseWordEl.textContent = current.ja;
+}
+
+function updateProgress(){
+  progressTextEl.textContent = `${currentIndex} / ${totalCount}`;
+  const percent = totalCount === 0 ? 0 : (currentIndex / totalCount) * 100;
+  progressBarEl.style.width = `${percent}%`;
 }
 
 function readWord(){
@@ -288,9 +369,11 @@ function nextWord(){
   }
 
   current = queue.pop();
+  currentIndex++;
   accepting = true;
   answered = false;
   showWord();
+  updateProgress();
   readWord();
   startTimer();
 }
@@ -366,6 +449,26 @@ function formatDateTime(d){
   return `${y}-${m}-${day} ${h}:${mi}:${s}`;
 }
 
+function addWord(){
+  const en = addEnglish.value.trim();
+  const ja = addJapanese.value.trim();
+
+  if(!en || !ja){
+    alert("英語と日本語を入れてください");
+    return;
+  }
+
+  const line = `${en},${ja}`;
+  if(importArea.value.trim() === ""){
+    importArea.value = line;
+  }else{
+    importArea.value = importArea.value.trim() + "\n" + line;
+  }
+
+  addEnglish.value = "";
+  addJapanese.value = "";
+}
+
 startBtn.addEventListener("click", () => {
   unlockAudio();
   words = parseWords(importArea.value);
@@ -381,12 +484,29 @@ startBtn.addEventListener("click", () => {
   answered = false;
   startTime = new Date();
   endTime = null;
+  totalCount = words.length;
+  currentIndex = 0;
+  updateProgress();
   setup.style.display = "none";
   nextWord();
 });
 
 closeSetupBtn.addEventListener("click", () => {
   setup.style.display = "none";
+});
+
+addWordBtn.addEventListener("click", addWord);
+
+clearAddBtn.addEventListener("click", () => {
+  addEnglish.value = "";
+  addJapanese.value = "";
+});
+
+addJapanese.addEventListener("keydown", (e) => {
+  if(e.key === "Enter"){
+    e.preventDefault();
+    addWord();
+  }
 });
 
 wrongBtn.addEventListener("click", () => submit("×"));
@@ -399,7 +519,8 @@ document.addEventListener("touchstart", (e) => {
   }
 }, { passive:true });
 
-wordEl.textContent = "---";
+showWord();
+updateProgress();
 </script>
 </body>
 </html>
