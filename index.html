@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>simple_touch_vocab.html</title>
+<title>simple_touch_vocab_flip.html</title>
 <style>
 *{
   box-sizing:border-box;
@@ -112,6 +112,22 @@ button{
 }
 #card{
   flex:1 1 auto;
+  background:transparent;
+  perspective:1200px;
+}
+#cardInner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .45s ease;
+}
+#card.flipped #cardInner{
+  transform:rotateY(180deg);
+}
+.cardFace{
+  position:absolute;
+  inset:0;
   background:#fff;
   border:2px solid #d7deea;
   border-radius:24px;
@@ -120,22 +136,15 @@ button{
   justify-content:center;
   text-align:center;
   padding:20px;
+  backface-visibility:hidden;
 }
-#wordWrap{
-  width:100%;
+#backFace{
+  transform:rotateY(180deg);
 }
-#englishWord{
+.wordText{
   font-size:34px;
   line-height:1.35;
   font-weight:900;
-  word-break:break-word;
-  overflow-wrap:anywhere;
-}
-#japaneseWord{
-  margin-top:14px;
-  font-size:24px;
-  line-height:1.45;
-  color:#475467;
   word-break:break-word;
   overflow-wrap:anywhere;
 }
@@ -146,7 +155,7 @@ button{
   grid-template-columns:1fr 1fr 1fr;
   gap:8px;
 }
-#wrongBtn,#againBtn,#correctBtn{
+#wrongBtn,#flipBtn,#correctBtn{
   min-height:78px;
   font-size:22px;
   border-radius:18px;
@@ -162,11 +171,8 @@ button{
   min-height:120px;
 }
 @media (max-width:480px){
-  #englishWord{
+  .wordText{
     font-size:28px;
-  }
-  #japaneseWord{
-    font-size:20px;
   }
   #buttons{
     grid-template-columns:1fr;
@@ -209,6 +215,12 @@ system,システム</textarea>
     <div class="small">日本語速度</div>
     <input type="number" id="rateJa" value="1.1" step="0.1">
 
+    <div class="small">開始面</div>
+    <select id="startSide">
+      <option value="en" selected>英語</option>
+      <option value="ja">日本語</option>
+    </select>
+
     <div class="small">日本語も読む</div>
     <select id="speakJapanese">
       <option value="yes" selected>yes</option>
@@ -234,15 +246,19 @@ system,システム</textarea>
   </div>
 
   <div id="card">
-    <div id="wordWrap">
-      <div id="englishWord">---</div>
-      <div id="japaneseWord">---</div>
+    <div id="cardInner">
+      <div class="cardFace" id="frontFace">
+        <div class="wordText" id="frontWord">---</div>
+      </div>
+      <div class="cardFace" id="backFace">
+        <div class="wordText" id="backWord">---</div>
+      </div>
     </div>
   </div>
 
   <div id="buttons">
     <button id="wrongBtn">わからない</button>
-    <button id="againBtn">さいこう</button>
+    <button id="flipBtn">うらおもて</button>
     <button id="correctBtn">わかる</button>
   </div>
 </div>
@@ -253,6 +269,7 @@ const answerLimitInput = document.getElementById("answerLimit");
 const rateEnInput = document.getElementById("rateEn");
 const rateJaInput = document.getElementById("rateJa");
 const speakJapaneseSelect = document.getElementById("speakJapanese");
+const startSideSelect = document.getElementById("startSide");
 const startBtn = document.getElementById("startBtn");
 const closeSetupBtn = document.getElementById("closeSetupBtn");
 const setup = document.getElementById("setup");
@@ -262,10 +279,11 @@ const addJapanese = document.getElementById("addJapanese");
 const addWordBtn = document.getElementById("addWordBtn");
 const clearAddBtn = document.getElementById("clearAddBtn");
 
-const englishWordEl = document.getElementById("englishWord");
-const japaneseWordEl = document.getElementById("japaneseWord");
+const card = document.getElementById("card");
+const frontWordEl = document.getElementById("frontWord");
+const backWordEl = document.getElementById("backWord");
 const wrongBtn = document.getElementById("wrongBtn");
-const againBtn = document.getElementById("againBtn");
+const flipBtn = document.getElementById("flipBtn");
 const correctBtn = document.getElementById("correctBtn");
 const resultEl = document.getElementById("result");
 const progressTextEl = document.getElementById("progressText");
@@ -283,6 +301,7 @@ let startTime = null;
 let endTime = null;
 let totalCount = 0;
 let currentIndex = 0;
+let currentFront = "en";
 
 function parseWords(text){
   return text
@@ -326,12 +345,27 @@ function unlockAudio(){
 
 function showWord(){
   if(!current){
-    englishWordEl.textContent = "---";
-    japaneseWordEl.textContent = "---";
+    frontWordEl.textContent = "---";
+    backWordEl.textContent = "---";
     return;
   }
-  englishWordEl.textContent = current.en;
-  japaneseWordEl.textContent = current.ja;
+
+  if(currentFront === "en"){
+    frontWordEl.textContent = current.en;
+    backWordEl.textContent = current.ja;
+  }else{
+    frontWordEl.textContent = current.ja;
+    backWordEl.textContent = current.en;
+  }
+}
+
+function resetCardFace(){
+  card.classList.remove("flipped");
+}
+
+function flipCard(){
+  if(!current) return;
+  card.classList.toggle("flipped");
 }
 
 function updateProgress(){
@@ -343,10 +377,18 @@ function updateProgress(){
 function readWord(){
   if(!current) return;
   speechSynthesis.cancel();
-  speak(current.en, "en-US", rateEnInput.value);
-  if(speakJapaneseSelect.value === "yes"){
+
+  if(currentFront === "en"){
+    speak(current.en, "en-US", rateEnInput.value);
+    if(speakJapaneseSelect.value === "yes"){
+      setTimeout(() => {
+        if(current) speak(current.ja, "ja-JP", rateJaInput.value);
+      }, 450);
+    }
+  }else{
+    speak(current.ja, "ja-JP", rateJaInput.value);
     setTimeout(() => {
-      if(current) speak(current.ja, "ja-JP", rateJaInput.value);
+      if(current) speak(current.en, "en-US", rateEnInput.value);
     }, 450);
   }
 }
@@ -372,6 +414,7 @@ function nextWord(){
   currentIndex++;
   accepting = true;
   answered = false;
+  resetCardFace();
   showWord();
   updateProgress();
   readWord();
@@ -396,16 +439,10 @@ function submit(mark){
   }, 180);
 }
 
-function handleAgain(){
+function handleFlip(){
   if(!running || !current) return;
-
-  if(answered){
-    nextWord();
-    return;
-  }
-
   clearTimeout(timer);
-  readWord();
+  flipCard();
   startTimer();
 }
 
@@ -486,6 +523,7 @@ startBtn.addEventListener("click", () => {
   endTime = null;
   totalCount = words.length;
   currentIndex = 0;
+  currentFront = startSideSelect.value === "ja" ? "ja" : "en";
   updateProgress();
   setup.style.display = "none";
   nextWord();
@@ -511,7 +549,8 @@ addJapanese.addEventListener("keydown", (e) => {
 
 wrongBtn.addEventListener("click", () => submit("×"));
 correctBtn.addEventListener("click", () => submit("○"));
-againBtn.addEventListener("click", handleAgain);
+flipBtn.addEventListener("click", handleFlip);
+card.addEventListener("click", handleFlip);
 
 document.addEventListener("touchstart", (e) => {
   if(e.touches.length === 2){
