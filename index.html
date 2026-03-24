@@ -89,7 +89,7 @@ button:active{ transform:scale(0.95); filter:brightness(0.9); }
     <div id="scoreSummary" style="text-align:center; font-size:18px; margin:15px 0; font-weight:800;"></div>
     <div id="maxComboReport" style="text-align:center; font-size:14px; color:var(--success); margin-bottom:10px;"></div>
     <textarea id="copyArea" readonly></textarea>
-    <button id="copyBtn" style="background: var(--success); color:#fff; margin:15px 0 10px;">ミスをコピー</button>
+    <button id="copyBtn" style="background: var(--success); color:#fff; margin:15px 0 10px;">結果をコピー</button>
     <button id="backToSetupBtn">戻る</button>
   </div>
 </div>
@@ -125,9 +125,11 @@ const gaugeEl = document.getElementById("gauge");
 const historyContent = document.getElementById("historyContent");
 const correctBtn = document.getElementById("correctBtn");
 const wrongBtn = document.getElementById("wrongBtn");
+const retryMissedBtn = document.getElementById("retryMissedBtn");
 
 let queue = [], results = [], current = null, timer = null, running = false, accepting = false;
 let combo = 0, maxCombo = 0, missedWords = [];
+let startTime = null, endTime = null;
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playSound(type) {
@@ -176,24 +178,18 @@ async function playSequence() {
   speechSynthesis.cancel();
   accepting = false;
   
-  // UI状態リセット（ボタン無効化、ゲージリセット）
   correctBtn.disabled = true; wrongBtn.disabled = true;
   correctBtn.style.opacity = "0.5"; wrongBtn.style.opacity = "0.5";
   gaugeEl.style.transition = 'none'; gaugeEl.style.transform = 'scaleX(0)';
   
   englishWordEl.textContent = current.en; japaneseWordEl.textContent = "";
   
-  // 1. 英語読み上げ
   await speak(current.en, "en-US");
   await new Promise(r => setTimeout(r, 100));
   
-  // 2. 日本語表示
   japaneseWordEl.textContent = current.ja;
-  
-  // 3. 日本語読み上げ（読み上げが終わるまでボタンは押せない）
   await speak(current.ja, "ja-JP");
   
-  // 4. 読み上げ終了後、選択を許可しタイマー開始
   accepting = true;
   correctBtn.disabled = false; wrongBtn.disabled = false;
   correctBtn.style.opacity = "1"; wrongBtn.style.opacity = "1";
@@ -235,25 +231,40 @@ function updateUI() {
 }
 
 function showReport() {
-  running = false; report.style.display = "block";
+  running = false;
+  endTime = new Date();
+  report.style.display = "block";
   const missed = results.filter(v => v.mark === "×");
   missedWords = missed;
-  document.getElementById("scoreSummary").textContent = `正解: ${results.length - missed.length} / ${results.length}`;
+  
+  const scoreText = `正解: ${results.length - missed.length} / ${results.length}`;
+  document.getElementById("scoreSummary").textContent = scoreText;
   document.getElementById("maxComboReport").textContent = `最大コンボ: ${maxCombo}`;
-  document.getElementById("copyArea").value = missed.map(v => `${v.en},${v.ja}`).join("\n");
+  
+  const timeFormat = (d) => d.toLocaleTimeString('ja-JP', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  let copyText = `修行記録\n開始: ${timeFormat(startTime)}\n終了: ${timeFormat(endTime)}\n間違い: ${missed.length}個\n\n【ミスの詳細】\n`;
+  copyText += missed.map(v => `${v.en},${v.ja}`).join("\n");
+  
+  document.getElementById("copyArea").value = copyText;
   retryMissedBtn.style.display = missed.length > 0 ? "block" : "none";
   saveHistory(results.length - missed.length, results.length);
 }
 
 document.getElementById("addSingleBtn").addEventListener("click", () => {
   if(!addEn.value || !addJa.value) return;
-  importArea.value += (importArea.value.trim() ? "\n" : "") + `${addEn.value},${addJa.value}`;
-  addEn.value = ""; addJa.value = ""; addEn.focus();
-  localStorage.setItem("vocab_data", importArea.value);
+  const newValue = (importArea.value.trim() ? importArea.value.trim() + "\n" : "") + `${addEn.value.trim()},${addJa.value.trim()}`;
+  importArea.value = newValue;
+  localStorage.setItem("vocab_data", newValue);
+  
+  // 入力欄をリセット
+  addEn.value = "";
+  addJa.value = "";
+  addEn.focus();
 });
 
 function startLearning(list) {
   if(!list.length) return;
+  startTime = new Date();
   queue = list.sort(() => Math.random() - 0.5);
   results = []; combo = 0; maxCombo = 0; running = true;
   setup.style.display = "none"; report.style.display = "none";
@@ -269,7 +280,12 @@ document.getElementById("startBtn").addEventListener("click", () => {
 
 retryMissedBtn.addEventListener("click", () => startLearning([...missedWords]));
 document.getElementById("copyBtn").addEventListener("click", () => {
-  document.getElementById("copyArea").select(); document.execCommand("copy");
+  document.getElementById("copyArea").select();
+  document.execCommand("copy");
+  const btn = document.getElementById("copyBtn");
+  const originalText = btn.textContent;
+  btn.textContent = "コピー完了";
+  setTimeout(() => btn.textContent = originalText, 1500);
 });
 document.getElementById("backToSetupBtn").addEventListener("click", () => { report.style.display = "none"; setup.style.display = "block"; });
 document.getElementById("correctBtn").addEventListener("click", () => submit("○"));
