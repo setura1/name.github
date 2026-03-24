@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>単語カード</title>
+<title>単語修行プロ</title>
 <style>
 :root {
   --bg: #f0f4f8;
@@ -47,8 +47,8 @@ button:active{ transform:scale(0.95); filter:brightness(0.9); }
 #englishWord{ font-size:38px; font-weight:900; }
 #japaneseWord{ margin-top:18px; font-size:26px; color: var(--primary); min-height:1.2em; font-weight:600; }
 #buttons{ flex:0 0 auto; display:grid; grid-template-columns:1fr 0.6fr 1fr; gap:25px; }
-#correctBtn{ background: var(--success); color:#fff; opacity: 0.5; }
-#wrongBtn{ background: var(--danger); color:#fff; opacity: 0.5; }
+#correctBtn{ background: var(--success); color:#fff; opacity: 1; }
+#wrongBtn{ background: var(--danger); color:#fff; opacity: 1; }
 #againBtn{ background: var(--container); border:2px solid #e2e8f0; font-size:14px; }
 #historyBox{ margin-top:20px; font-size:13px; opacity:0.8; line-height:1.6; }
 @media (max-width:480px){
@@ -63,16 +63,23 @@ button:active{ transform:scale(0.95); filter:brightness(0.9); }
 <div id="setup">
   <div class="container">
     <div style="font-size:22px;font-weight:900;text-align:center;margin-bottom:15px;">単語カード</div>
-    <div class="label">追加</div>
+    <div class="label">単語追加 (English , 日本語)</div>
     <div class="row">
-      <input type="text" id="addEn" placeholder="English" autocomplete="off">
-      <input type="text" id="addJa" placeholder="日本語" autocomplete="off">
+      <input type="text" id="addEn" placeholder="apple" autocomplete="off">
+      <input type="text" id="addJa" placeholder="りんご" autocomplete="off">
     </div>
     <button id="addSingleBtn" style="margin-top:8px; background:rgba(0,0,0,0.05);">追加して保存</button>
     <textarea id="importArea" style="margin-top:15px;"></textarea>
+    
+    <div class="label">テスト範囲設定 (1番から開始)</div>
     <div class="row">
-      <div><div class="label">速度</div><input type="number" id="rateAll" value="1.4" step="0.1"></div>
-      <div><div class="label">制限(ms)</div><input type="number" id="answerLimit" value="1000" step="100"></div>
+      <div><div class="label">開始番号</div><input type="number" id="rangeStart" value="1" min="1"></div>
+      <div><div class="label">終了番号</div><input type="number" id="rangeEnd" value="100"></div>
+    </div>
+
+    <div class="row">
+      <div><div class="label">再生速度</div><input type="number" id="rateAll" value="1.4" step="0.1"></div>
+      <div><div class="label">強制ミス制限(ms)</div><input type="number" id="answerLimit" value="2000" step="100"></div>
     </div>
     <button id="startBtn">修行開始</button>
     <button id="retryMissedBtn">ミスの復習</button>
@@ -104,9 +111,9 @@ button:active{ transform:scale(0.95); filter:brightness(0.9); }
     <div id="gaugeWrap"><div id="gauge"></div></div>
   </div>
   <div id="buttons">
-    <button id="correctBtn" disabled>わかる</button>
+    <button id="correctBtn">わかる (Z)</button>
     <button id="againBtn">再送</button>
-    <button id="wrongBtn" disabled>苦手</button>
+    <button id="wrongBtn">苦手 (A)</button>
   </div>
 </div>
 
@@ -176,35 +183,40 @@ function speak(text, lang) {
 async function playSequence() {
   if(!current) return;
   speechSynthesis.cancel();
-  accepting = false;
+  clearTimeout(timer);
   
-  correctBtn.disabled = true; wrongBtn.disabled = true;
-  correctBtn.style.opacity = "0.5"; wrongBtn.style.opacity = "0.5";
-  gaugeEl.style.transition = 'none'; gaugeEl.style.transform = 'scaleX(0)';
+  // 英語読み上げ開始時点で回答を受け付ける
+  accepting = true;
+  gaugeEl.style.transition = 'none';
+  gaugeEl.style.transform = 'scaleX(0)';
   
-  englishWordEl.textContent = current.en; japaneseWordEl.textContent = "";
+  englishWordEl.textContent = current.en;
+  japaneseWordEl.textContent = "";
   
+  // 制限時間タイマー開始（英語読み上げ開始と同時）
+  const ms = Number(document.getElementById("answerLimit").value) || 2000;
+  gaugeEl.style.transition = `transform ${ms}ms linear`;
+  setTimeout(() => gaugeEl.style.transform = 'scaleX(1)', 10);
+  
+  timer = setTimeout(() => {
+    if(accepting && running) submit("×");
+  }, ms);
+
   await speak(current.en, "en-US");
+  if(!accepting) return; // すでに回答済みの場合は中断
+
   await new Promise(r => setTimeout(r, 100));
-  
+  if(!accepting) return;
+
   japaneseWordEl.textContent = current.ja;
   await speak(current.ja, "ja-JP");
-  
-  accepting = true;
-  correctBtn.disabled = false; wrongBtn.disabled = false;
-  correctBtn.style.opacity = "1"; wrongBtn.style.opacity = "1";
-  
-  const ms = Number(document.getElementById("answerLimit").value) || 1000;
-  gaugeEl.style.transition = `transform ${ms}ms linear`;
-  gaugeEl.style.transform = 'scaleX(1)';
-  
-  clearTimeout(timer);
-  timer = setTimeout(() => { if(accepting) submit("×"); }, ms);
 }
 
 function submit(mark) {
   if(!running || !accepting) return;
-  clearTimeout(timer); accepting = false;
+  clearTimeout(timer);
+  accepting = false;
+  speechSynthesis.cancel();
   
   if(mark === '○') {
     playSound('ok'); combo++;
@@ -255,11 +267,7 @@ document.getElementById("addSingleBtn").addEventListener("click", () => {
   const newValue = (importArea.value.trim() ? importArea.value.trim() + "\n" : "") + `${addEn.value.trim()},${addJa.value.trim()}`;
   importArea.value = newValue;
   localStorage.setItem("vocab_data", newValue);
-  
-  // 入力欄をリセット
-  addEn.value = "";
-  addJa.value = "";
-  addEn.focus();
+  addEn.value = ""; addJa.value = ""; addEn.focus();
 });
 
 function startLearning(list) {
@@ -272,20 +280,28 @@ function startLearning(list) {
 }
 
 document.getElementById("startBtn").addEventListener("click", () => {
-  const list = importArea.value.split("\n").filter(v => v.includes(",")).map(line => {
+  const fullList = importArea.value.split("\n").filter(v => v.includes(",")).map(line => {
     const p = line.split(","); return { en: p[0].trim(), ja: p[1].trim() };
   });
-  startLearning(list);
+  
+  const s = parseInt(document.getElementById("rangeStart").value) - 1;
+  const e = parseInt(document.getElementById("rangeEnd").value);
+  const scopedList = fullList.slice(Math.max(0, s), e);
+  
+  startLearning(scopedList);
+});
+
+// PCキーボード対応
+document.addEventListener("keydown", (e) => {
+  if(!running || !accepting) return;
+  if(e.key.toLowerCase() === "z") submit("○");
+  if(e.key.toLowerCase() === "a") submit("×");
 });
 
 retryMissedBtn.addEventListener("click", () => startLearning([...missedWords]));
 document.getElementById("copyBtn").addEventListener("click", () => {
   document.getElementById("copyArea").select();
   document.execCommand("copy");
-  const btn = document.getElementById("copyBtn");
-  const originalText = btn.textContent;
-  btn.textContent = "コピー完了";
-  setTimeout(() => btn.textContent = originalText, 1500);
 });
 document.getElementById("backToSetupBtn").addEventListener("click", () => { report.style.display = "none"; setup.style.display = "block"; });
 document.getElementById("correctBtn").addEventListener("click", () => submit("○"));
