@@ -3,70 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>Pro_Speed_Vocab_Final</title>
+<title>単語カード</title>
 <style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
+:root {
+  --bg: #f0f4f8;
+  --container: #ffffff;
+  --text: #334155;
+  --primary: #2563eb;
+  --success: #22c55e;
+  --danger: #ef4444;
 }
-html,body{
-  margin:0; width:100%; height:100%;
-  background:#f0f4f8;
-  font-family:sans-serif;
-  color:#334155;
+/* ダークモード設定 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --container: #1e293b;
+    --text: #f1f5f9;
+    --primary: #3b82f6;
+  }
 }
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{ margin:0; width:100%; height:100%; background: var(--bg); font-family:sans-serif; color: var(--text); }
 body{ overflow:hidden; }
-#setup, #report{
-  position:fixed; inset:0; background:#f0f4f8;
-  padding:16px; z-index:10; overflow:auto; display:none;
-}
+#setup, #report{ position:fixed; inset:0; background: var(--bg); padding:16px; z-index:10; overflow:auto; display:none; }
 #setup{ display:block; }
-.container{
-  max-width:600px; margin:0 auto; background:#fff;
-  border-radius:24px; padding:24px; box-shadow:0 10px 25px rgba(0,0,0,0.05);
-}
-textarea,input,button{
-  width:100%; font-size:16px; border-radius:14px; border:1px solid #e2e8f0;
-}
-textarea,input{ padding:14px; background:#f8fafc; }
-textarea{ min-height:150px; font-family:monospace; }
-button{
-  min-height:54px; font-weight:800; cursor:pointer; border:none;
-  transition:all 0.1s ease; display:flex; align-items:center; justify-content:center;
-}
+.container{ max-width:600px; margin:0 auto; background: var(--container); border-radius:24px; padding:24px; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
+textarea,input,button{ width:100%; font-size:16px; border-radius:14px; border:1px solid #e2e8f0; }
+textarea,input{ padding:14px; background: rgba(0,0,0,0.03); color: inherit; }
+textarea{ min-height:120px; font-family:monospace; }
+button{ min-height:54px; font-weight:800; cursor:pointer; border:none; transition:all 0.1s ease; display:flex; align-items:center; justify-content:center; }
 button:active{ transform:scale(0.95); filter:brightness(0.9); }
-#startBtn{ background:#2563eb; color:#fff; margin-top:12px; }
-#retryMissedBtn{ background:#fff; color:#ef4444; border:2px solid #ef4444; margin-top:10px; display:none; }
+#startBtn{ background: var(--primary); color:#fff; margin-top:12px; }
+#retryMissedBtn{ background: transparent; color: var(--danger); border:2px solid var(--danger); margin-top:10px; display:none; }
 .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px; }
-.label{ font-size:12px; font-weight:700; color:#64748b; margin:14px 0 6px 4px; }
-#app{
-  width:100%; height:100%; display:flex; flex-direction:column;
-  padding:max(15px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)) 16px;
-}
-#progressText{ font-size:14px; font-weight:800; text-align:center; color:#64748b; margin-bottom:8px; }
-#progressBarWrap{ width:100%; height:8px; background:#e2e8f0; border-radius:10px; overflow:hidden; }
-#progressBar{ width:0%; height:100%; background:#2563eb; transition:width .3s ease; }
-#card{
-  flex:1 1 auto; background:#fff; border-radius:32px;
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; margin:15px 0; box-shadow:0 4px 15px rgba(0,0,0,0.03);
-  position:relative; overflow:hidden;
-}
-/* カウントダウンゲージ */
-#gaugeWrap{ position:absolute; bottom:0; left:0; width:100%; height:6px; background:#eee; }
-#gauge{ width:100%; height:100%; background:#ef4444; transform-origin:left; }
-
-#englishWord{ font-size:38px; font-weight:900; color:#0f172a; }
-#japaneseWord{ margin-top:18px; font-size:26px; color:#2563eb; min-height:1.2em; font-weight:600; }
+.label{ font-size:12px; font-weight:700; opacity:0.7; margin:14px 0 6px 4px; }
+#app{ width:100%; height:100%; display:flex; flex-direction:column; padding:max(15px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)) 16px; }
+#progressBarWrap{ width:100%; height:8px; background:rgba(0,0,0,0.1); border-radius:10px; overflow:hidden; }
+#progressBar{ width:0%; height:100%; background: var(--primary); transition:width .3s ease; }
+#card{ flex:1 1 auto; background: var(--container); border-radius:32px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; margin:15px 0; box-shadow:0 4px 15px rgba(0,0,0,0.1); position:relative; overflow:hidden; }
+#gaugeWrap{ position:absolute; bottom:0; left:0; width:100%; height:6px; background:rgba(0,0,0,0.05); }
+#gauge{ width:100%; height:100%; background: var(--danger); transform-origin:left; }
+#comboDisplay{ position:absolute; top:20px; right:20px; font-size:20px; font-weight:900; color: var(--success); opacity:0; transition: transform 0.2s; }
+#comboDisplay.active{ opacity:1; transform: scale(1.2); }
+#englishWord{ font-size:38px; font-weight:900; }
+#japaneseWord{ margin-top:18px; font-size:26px; color: var(--primary); min-height:1.2em; font-weight:600; }
 #buttons{ flex:0 0 auto; display:grid; grid-template-columns:1fr 0.6fr 1fr; gap:25px; }
-#correctBtn{ background:#22c55e; color:#fff; }
-#wrongBtn{ background:#ef4444; color:#fff; }
-#againBtn{ background:#fff; border:2px solid #e2e8f0; font-size:14px; color:#64748b; }
-#correctBtn,#wrongBtn,#againBtn{ min-height:88px; font-size:22px; border-radius:24px; }
+#correctBtn{ background: var(--success); color:#fff; }
+#wrongBtn{ background: var(--danger); color:#fff; }
+#againBtn{ background: var(--container); border:2px solid #e2e8f0; font-size:14px; }
+#historyBox{ margin-top:20px; font-size:13px; opacity:0.8; line-height:1.6; }
 @media (max-width:480px){
-  #buttons{ grid-template-columns:1fr; gap:12px; }
+  #buttons{ grid-template-columns:1fr; gap:10px; }
   #correctBtn{ order: 1; } #againBtn{ order: 2; min-height:44px; } #wrongBtn{ order: 3; }
-  #englishWord{ font-size:30px; }
+  #englishWord{ font-size:32px; }
 }
 </style>
 </head>
@@ -74,52 +63,50 @@ button:active{ transform:scale(0.95); filter:brightness(0.9); }
 
 <div id="setup">
   <div class="container">
-    <div style="font-size:20px;font-weight:900;text-align:center;margin-bottom:15px;">オート修行修行 V4</div>
+    <div style="font-size:22px;font-weight:900;text-align:center;margin-bottom:15px;">単語カード</div>
     
-    <div class="label">クイック追加</div>
+    <div class="label">追加</div>
     <div class="row">
-      <input type="text" id="addEn" placeholder="apple" autocomplete="off">
-      <input type="text" id="addJa" placeholder="りんご" autocomplete="off">
+      <input type="text" id="addEn" placeholder="English" autocomplete="off">
+      <input type="text" id="addJa" placeholder="日本語" autocomplete="off">
     </div>
-    <button id="addSingleBtn" style="margin-top:8px; min-height:44px; font-size:14px; background:#e2e8f0;">追加して保存</button>
+    <button id="addSingleBtn" style="margin-top:8px; background:rgba(0,0,0,0.05);">追加して保存</button>
     
-    <div class="label">全体リスト (自動保存)</div>
-    <textarea id="importArea"></textarea>
+    <textarea id="importArea" style="margin-top:15px;"></textarea>
     
     <div class="row">
-      <div>
-        <div class="label">音声速度</div>
-        <input type="number" id="rateAll" value="1.4" step="0.1">
-      </div>
-      <div>
-        <div class="label">制限時間(ms)</div>
-        <input type="number" id="answerLimit" value="1000" step="100">
-      </div>
+      <div><div class="label">速度</div><input type="number" id="rateAll" value="1.4" step="0.1"></div>
+      <div><div class="label">制限(ms)</div><input type="number" id="answerLimit" value="1000" step="100"></div>
     </div>
-    <button id="startBtn">学習開始</button>
-    <button id="retryMissedBtn">前回のミス単語だけで開始</button>
+    
+    <button id="startBtn">修行開始</button>
+    <button id="retryMissedBtn">ミスの復習</button>
+    
+    <div id="historyBox">
+      <div style="font-weight:bold; border-bottom:1px solid #ddd; margin-bottom:5px;">修行ログ</div>
+      <div id="historyContent">記録なし</div>
+    </div>
   </div>
 </div>
 
 <div id="report">
   <div class="container">
-    <div style="font-size:20px;font-weight:900;text-align:center;">結果レポート</div>
+    <div style="font-size:20px;font-weight:900;text-align:center;">リザルト</div>
     <div id="scoreSummary" style="text-align:center; font-size:18px; margin:15px 0; font-weight:800;"></div>
-    <div class="label">ミスリスト</div>
+    <div id="maxComboReport" style="text-align:center; font-size:14px; color:var(--success); margin-bottom:10px;"></div>
     <textarea id="copyArea" readonly></textarea>
-    <button id="copyBtn" style="background:#22c55e; color:#fff; margin-bottom:10px;">コピー</button>
+    <button id="copyBtn" style="background: var(--success); color:#fff; margin:15px 0 10px;">ミスをコピー</button>
     <button id="backToSetupBtn">戻る</button>
   </div>
 </div>
 
 <div id="app">
-  <div id="progressText">0 / 0</div>
+  <div id="progressText" style="text-align:center; font-size:12px; font-weight:bold; margin-bottom:5px;">0 / 0</div>
   <div id="progressBarWrap"><div id="progressBar"></div></div>
   <div id="card">
-    <div id="wordWrap">
-      <div id="englishWord">Ready</div>
-      <div id="japaneseWord"></div>
-    </div>
+    <div id="comboDisplay">0 COMBO</div>
+    <div id="englishWord">Ready</div>
+    <div id="japaneseWord"></div>
     <div id="gaugeWrap"><div id="gauge"></div></div>
   </div>
   <div id="buttons">
@@ -139,49 +126,52 @@ const report = document.getElementById("report");
 const englishWordEl = document.getElementById("englishWord");
 const japaneseWordEl = document.getElementById("japaneseWord");
 const progressBarEl = document.getElementById("progressBar");
-const progressTextEl = document.getElementById("progressText");
+const comboDisplay = document.getElementById("comboDisplay");
 const gaugeEl = document.getElementById("gauge");
-const copyArea = document.getElementById("copyArea");
-const retryMissedBtn = document.getElementById("retryMissedBtn");
+const historyContent = document.getElementById("historyContent");
 
 let queue = [], results = [], current = null, timer = null, running = false, accepting = false;
-let missedWords = [];
+let combo = 0, maxCombo = 0, missedWords = [];
 
-// 音声合成（ピコーン/ブブー）
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playSound(type) {
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
+  const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+  osc.connect(gain); gain.connect(audioCtx.destination);
   if(type === 'ok') {
-    osc.type = 'sine'; osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.1);
     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
     osc.start(); osc.stop(audioCtx.currentTime + 0.2);
   } else {
     osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime);
     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
     osc.start(); osc.stop(audioCtx.currentTime + 0.3);
   }
 }
 
 window.onload = () => {
   importArea.value = localStorage.getItem("vocab_data") || "apple,りんご\nengineer,技術者";
+  updateHistoryDisplay();
 };
 
-importArea.addEventListener("input", () => {
-  localStorage.setItem("vocab_data", importArea.value);
-});
+function saveHistory(score, total) {
+  let logs = JSON.parse(localStorage.getItem("vocab_logs") || "[]");
+  logs.unshift({ date: new Date().toLocaleString('ja-JP', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}), score, total });
+  localStorage.setItem("vocab_logs", JSON.stringify(logs.slice(0, 5)));
+  updateHistoryDisplay();
+}
+
+function updateHistoryDisplay() {
+  const logs = JSON.parse(localStorage.getItem("vocab_logs") || "[]");
+  if(logs.length === 0) return;
+  historyContent.innerHTML = logs.map(l => `<div>${l.date} : ${l.score}/${l.total}</div>`).join("");
+}
 
 function speak(text, lang) {
   return new Promise(resolve => {
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang; u.rate = Number(rateInput.value) || 1.4;
-    u.onend = resolve;
-    speechSynthesis.speak(u);
+    u.lang = lang; u.rate = Number(rateInput.value);
+    u.onend = resolve; speechSynthesis.speak(u);
   });
 }
 
@@ -189,68 +179,57 @@ async function playSequence() {
   if(!current) return;
   speechSynthesis.cancel();
   accepting = false;
-  
-  // ゲージリセット
-  gaugeEl.style.transition = 'none';
-  gaugeEl.style.width = '100%';
-
-  englishWordEl.textContent = current.en;
-  japaneseWordEl.textContent = "";
+  gaugeEl.style.transition = 'none'; gaugeEl.style.width = '100%';
+  englishWordEl.textContent = current.en; japaneseWordEl.textContent = "";
   await speak(current.en, "en-US");
-  
   await new Promise(r => setTimeout(r, 100));
   japaneseWordEl.textContent = current.ja;
   await speak(current.ja, "ja-JP");
   
-  // 制限時間の開始
   accepting = true;
   const ms = Number(document.getElementById("answerLimit").value) || 1000;
-  
-  // ゲージのアニメーション
   gaugeEl.style.transition = `width ${ms}ms linear`;
   gaugeEl.style.width = '0%';
-  
   clearTimeout(timer);
-  timer = setTimeout(() => {
-    if(accepting) submit("×");
-  }, ms);
-}
-
-function next() {
-  if(queue.length === 0) { showReport(); return; }
-  current = queue.pop();
-  updateUI();
-  playSequence();
+  timer = setTimeout(() => { if(accepting) submit("×"); }, ms);
 }
 
 function submit(mark) {
   if(!running || !accepting) return;
-  clearTimeout(timer);
-  accepting = false;
-  
-  if(mark === '○') playSound('ok');
-  else playSound('ng');
-
+  clearTimeout(timer); accepting = false;
+  if(mark === '○') {
+    playSound('ok'); combo++;
+    if(combo > maxCombo) maxCombo = combo;
+    comboDisplay.textContent = `${combo} COMBO`;
+    comboDisplay.classList.add('active');
+  } else {
+    playSound('ng'); combo = 0;
+    comboDisplay.classList.remove('active');
+  }
   results.push({ ...current, mark });
   setTimeout(next, 150);
 }
 
+function next() {
+  if(queue.length === 0) { showReport(); return; }
+  current = queue.pop(); updateUI(); playSequence();
+}
+
 function updateUI() {
   const total = results.length + queue.length + 1;
-  const done = results.length;
-  progressTextEl.textContent = `${done + 1} / ${total}`;
-  progressBarEl.style.width = `${(done / total) * 100}%`;
+  document.getElementById("progressText").textContent = `${results.length + 1} / ${total}`;
+  progressBarEl.style.width = `${(results.length / total) * 100}%`;
 }
 
 function showReport() {
-  running = false;
-  report.style.display = "block";
+  running = false; report.style.display = "block";
   const missed = results.filter(v => v.mark === "×");
-  missedWords = missed; 
-  if(missed.length > 0) retryMissedBtn.style.display = "block";
-  
+  missedWords = missed;
   document.getElementById("scoreSummary").textContent = `正解: ${results.length - missed.length} / ${results.length}`;
-  copyArea.value = missed.map(v => `${v.en},${v.ja}`).join("\n");
+  document.getElementById("maxComboReport").textContent = `最大コンボ: ${maxCombo}`;
+  document.getElementById("copyArea").value = missed.map(v => `${v.en},${v.ja}`).join("\n");
+  retryMissedBtn.style.display = missed.length > 0 ? "block" : "none";
+  saveHistory(results.length - missed.length, results.length);
 }
 
 document.getElementById("addSingleBtn").addEventListener("click", () => {
@@ -263,9 +242,8 @@ document.getElementById("addSingleBtn").addEventListener("click", () => {
 function startLearning(list) {
   if(!list.length) return;
   queue = list.sort(() => Math.random() - 0.5);
-  results = []; running = true;
-  setup.style.display = "none";
-  report.style.display = "none";
+  results = []; combo = 0; maxCombo = 0; running = true;
+  setup.style.display = "none"; report.style.display = "none";
   next();
 }
 
@@ -276,25 +254,15 @@ document.getElementById("startBtn").addEventListener("click", () => {
   startLearning(list);
 });
 
-retryMissedBtn.addEventListener("click", () => {
-  startLearning([...missedWords]);
-});
-
+retryMissedBtn.addEventListener("click", () => startLearning([...missedWords]));
 document.getElementById("copyBtn").addEventListener("click", () => {
-  copyArea.select(); document.execCommand("copy");
+  document.getElementById("copyArea").select(); document.execCommand("copy");
 });
-
-document.getElementById("backToSetupBtn").addEventListener("click", () => {
-  report.style.display = "none"; setup.style.display = "block";
-});
-
+document.getElementById("backToSetupBtn").addEventListener("click", () => { report.style.display = "none"; setup.style.display = "block"; });
 document.getElementById("correctBtn").addEventListener("click", () => submit("○"));
 document.getElementById("wrongBtn").addEventListener("click", () => submit("×"));
 document.getElementById("againBtn").addEventListener("click", () => { if(running) playSequence(); });
-
-document.addEventListener("touchstart", (e) => {
-  if(e.touches.length === 2) location.reload();
-}, { passive: true });
+document.addEventListener("touchstart", (e) => { if(e.touches.length === 2) location.reload(); }, { passive: true });
 </script>
 </body>
 </html>
