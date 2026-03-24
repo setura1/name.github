@@ -13,7 +13,6 @@
   --success: #22c55e;
   --danger: #ef4444;
 }
-/* ダークモード設定 */
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #0f172a;
@@ -42,14 +41,14 @@ button:active{ transform:scale(0.95); filter:brightness(0.9); }
 #progressBar{ width:0%; height:100%; background: var(--primary); transition:width .3s ease; }
 #card{ flex:1 1 auto; background: var(--container); border-radius:32px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; margin:15px 0; box-shadow:0 4px 15px rgba(0,0,0,0.1); position:relative; overflow:hidden; }
 #gaugeWrap{ position:absolute; bottom:0; left:0; width:100%; height:6px; background:rgba(0,0,0,0.05); }
-#gauge{ width:100%; height:100%; background: var(--danger); transform-origin:left; }
+#gauge{ width:100%; height:100%; background: var(--danger); transform-origin:left; transform: scaleX(0); }
 #comboDisplay{ position:absolute; top:20px; right:20px; font-size:20px; font-weight:900; color: var(--success); opacity:0; transition: transform 0.2s; }
 #comboDisplay.active{ opacity:1; transform: scale(1.2); }
 #englishWord{ font-size:38px; font-weight:900; }
 #japaneseWord{ margin-top:18px; font-size:26px; color: var(--primary); min-height:1.2em; font-weight:600; }
 #buttons{ flex:0 0 auto; display:grid; grid-template-columns:1fr 0.6fr 1fr; gap:25px; }
-#correctBtn{ background: var(--success); color:#fff; }
-#wrongBtn{ background: var(--danger); color:#fff; }
+#correctBtn{ background: var(--success); color:#fff; opacity: 0.5; }
+#wrongBtn{ background: var(--danger); color:#fff; opacity: 0.5; }
 #againBtn{ background: var(--container); border:2px solid #e2e8f0; font-size:14px; }
 #historyBox{ margin-top:20px; font-size:13px; opacity:0.8; line-height:1.6; }
 @media (max-width:480px){
@@ -64,24 +63,19 @@ button:active{ transform:scale(0.95); filter:brightness(0.9); }
 <div id="setup">
   <div class="container">
     <div style="font-size:22px;font-weight:900;text-align:center;margin-bottom:15px;">単語カード</div>
-    
     <div class="label">追加</div>
     <div class="row">
       <input type="text" id="addEn" placeholder="English" autocomplete="off">
       <input type="text" id="addJa" placeholder="日本語" autocomplete="off">
     </div>
     <button id="addSingleBtn" style="margin-top:8px; background:rgba(0,0,0,0.05);">追加して保存</button>
-    
     <textarea id="importArea" style="margin-top:15px;"></textarea>
-    
     <div class="row">
       <div><div class="label">速度</div><input type="number" id="rateAll" value="1.4" step="0.1"></div>
       <div><div class="label">制限(ms)</div><input type="number" id="answerLimit" value="1000" step="100"></div>
     </div>
-    
     <button id="startBtn">修行開始</button>
     <button id="retryMissedBtn">ミスの復習</button>
-    
     <div id="historyBox">
       <div style="font-weight:bold; border-bottom:1px solid #ddd; margin-bottom:5px;">修行ログ</div>
       <div id="historyContent">記録なし</div>
@@ -110,9 +104,9 @@ button:active{ transform:scale(0.95); filter:brightness(0.9); }
     <div id="gaugeWrap"><div id="gauge"></div></div>
   </div>
   <div id="buttons">
-    <button id="correctBtn">わかる</button>
+    <button id="correctBtn" disabled>わかる</button>
     <button id="againBtn">再送</button>
-    <button id="wrongBtn">苦手</button>
+    <button id="wrongBtn" disabled>苦手</button>
   </div>
 </div>
 
@@ -129,6 +123,8 @@ const progressBarEl = document.getElementById("progressBar");
 const comboDisplay = document.getElementById("comboDisplay");
 const gaugeEl = document.getElementById("gauge");
 const historyContent = document.getElementById("historyContent");
+const correctBtn = document.getElementById("correctBtn");
+const wrongBtn = document.getElementById("wrongBtn");
 
 let queue = [], results = [], current = null, timer = null, running = false, accepting = false;
 let combo = 0, maxCombo = 0, missedWords = [];
@@ -179,17 +175,33 @@ async function playSequence() {
   if(!current) return;
   speechSynthesis.cancel();
   accepting = false;
-  gaugeEl.style.transition = 'none'; gaugeEl.style.width = '100%';
+  
+  // UI状態リセット（ボタン無効化、ゲージリセット）
+  correctBtn.disabled = true; wrongBtn.disabled = true;
+  correctBtn.style.opacity = "0.5"; wrongBtn.style.opacity = "0.5";
+  gaugeEl.style.transition = 'none'; gaugeEl.style.transform = 'scaleX(0)';
+  
   englishWordEl.textContent = current.en; japaneseWordEl.textContent = "";
+  
+  // 1. 英語読み上げ
   await speak(current.en, "en-US");
   await new Promise(r => setTimeout(r, 100));
+  
+  // 2. 日本語表示
   japaneseWordEl.textContent = current.ja;
+  
+  // 3. 日本語読み上げ（読み上げが終わるまでボタンは押せない）
   await speak(current.ja, "ja-JP");
   
+  // 4. 読み上げ終了後、選択を許可しタイマー開始
   accepting = true;
+  correctBtn.disabled = false; wrongBtn.disabled = false;
+  correctBtn.style.opacity = "1"; wrongBtn.style.opacity = "1";
+  
   const ms = Number(document.getElementById("answerLimit").value) || 1000;
-  gaugeEl.style.transition = `width ${ms}ms linear`;
-  gaugeEl.style.width = '0%';
+  gaugeEl.style.transition = `transform ${ms}ms linear`;
+  gaugeEl.style.transform = 'scaleX(1)';
+  
   clearTimeout(timer);
   timer = setTimeout(() => { if(accepting) submit("×"); }, ms);
 }
@@ -197,6 +209,7 @@ async function playSequence() {
 function submit(mark) {
   if(!running || !accepting) return;
   clearTimeout(timer); accepting = false;
+  
   if(mark === '○') {
     playSound('ok'); combo++;
     if(combo > maxCombo) maxCombo = combo;
